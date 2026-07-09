@@ -29,40 +29,42 @@ const tickerItems = [
       <img
         src="/images/products/laufweste-spotlight-front.png"
         alt="Carlu's Laufweste, dramatisch im Spotlight freigestellt"
-        class="w-full h-full object-contain object-center"
+        class="vest-rotate w-full h-full object-contain object-center"
       />
     </div>
     <div class="grain-overlay"></div>
 
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-24 sm:py-32 lg:py-40">
-      <div class="lg:max-w-xl">
-        <p class="mono-tag text-bg/50 mb-4 fade-in">— Carlu's Shop</p>
-        <h1 class="headline text-6xl sm:text-8xl lg:text-7xl xl:text-8xl fade-in" style="animation-delay: 60ms">
-          Wir liefern die Produkte,<br />
-          Du lieferst <span class="text-accent">ab</span>!
-        </h1>
-        <p class="mt-8 text-lg sm:text-xl text-bg/70 fade-in" style="animation-delay: 120ms">
-          Qualitätsprodukte, die dir deinen Fitness-Alltag erleichtern.<br />
-          Deutsche Marke. Versand nach Deutschland, Österreich, Schweiz.
-        </p>
-        <a
-          href="/produkte"
-          class="sticker mt-10 inline-flex items-center gap-2 bg-accent text-accent-ink font-bold px-8 py-4 rounded-sm text-lg fade-in"
-          style="animation-delay: 180ms"
-        >
-          Alle Produkte
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-        </a>
-      </div>
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 lg:py-40">
+      <div class="flex items-center gap-5 sm:gap-8 lg:block">
+        <div class="flex-1 min-w-0 lg:max-w-xl">
+          <p class="mono-tag text-bg/50 mb-2 sm:mb-4 fade-in">— Carlu's Shop</p>
+          <h1 class="headline text-3xl sm:text-6xl lg:text-7xl xl:text-8xl fade-in" style="animation-delay: 60ms">
+            Wir liefern die Produkte,<br />
+            Du lieferst <span class="text-accent">ab</span>!
+          </h1>
+          <p class="mt-4 sm:mt-8 text-xs sm:text-lg lg:text-xl text-bg/70 fade-in" style="animation-delay: 120ms">
+            Qualitätsprodukte, die dir deinen Fitness-Alltag erleichtern.<br />
+            Deutsche Marke. Versand nach Deutschland, Österreich, Schweiz.
+          </p>
+          <a
+            href="/produkte"
+            class="sticker mt-5 sm:mt-10 inline-flex items-center gap-1.5 sm:gap-2 bg-accent text-accent-ink font-bold px-4 py-2.5 sm:px-8 sm:py-4 rounded-sm text-sm sm:text-lg fade-in"
+            style="animation-delay: 180ms"
+          >
+            Alle Produkte
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </a>
+        </div>
 
-      <!-- Mobile/tablet: image stacked below the text instead of the
-           side-panel treatment (which only works at lg+ widths) -->
-      <div class="lg:hidden flex justify-center mt-12 fade-in" style="animation-delay: 220ms">
-        <img
-          src="/images/products/laufweste-spotlight-front.png"
-          alt="Carlu's Laufweste, dramatisch im Spotlight freigestellt"
-          class="h-72 sm:h-96 w-auto object-contain"
-        />
+        <!-- Mobile/tablet: image next to the text instead of the
+             side-panel treatment (which only works at lg+ widths) -->
+        <div class="lg:hidden shrink-0 w-[36%] sm:w-[32%] fade-in" style="animation-delay: 220ms">
+          <img
+            src="/images/products/laufweste-spotlight-front.png"
+            alt="Carlu's Laufweste, dramatisch im Spotlight freigestellt"
+            class="vest-rotate w-full h-auto object-contain"
+          />
+        </div>
       </div>
     </div>
     <div class="spec-rule"></div>

@@ -236,6 +236,19 @@ html.js-ready .reveal.is-visible {
   pointer-events: none;
 }
 
+/* Continuous, slow rotation for the hero vest photo. A full 360°
+   in-plane spin would flip a flat photo upside down mid-cycle, so this
+   swings back and forth instead — reads as constant motion without
+   ever looking broken. */
+.vest-rotate {
+  animation: vest-rotate 7s ease-in-out infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes vest-rotate {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(4deg); }
+}
+
 /* Faint grain texture for the dark hero, keeps large flat blacks from
    looking dead/flat on screen. */
 .grain-overlay {
