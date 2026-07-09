@@ -25,6 +25,7 @@ import { products } from '@/data/products';
         muted
         loop
         playsinline
+        preload="auto"
         aria-hidden="true"
       ></video>
     </div>
@@ -64,6 +65,7 @@ import { products } from '@/data/products';
             muted
             loop
             playsinline
+            preload="auto"
             aria-hidden="true"
           ></video>
         </div>
@@ -126,4 +128,12 @@ import { products } from '@/data/products';
   }
   playHeroVideos();
   document.addEventListener('astro:page-load', playHeroVideos);
+
+  // Some devices (e.g. iOS in Low Power Mode) block autoplay outright and
+  // show a play button on the video itself. Rather than making someone
+  // find and tap that, retry on the very first interaction anywhere on
+  // the page — most visitors touch/scroll within the first second anyway.
+  ['touchstart', 'click', 'scroll'].forEach((evt) =>
+    document.addEventListener(evt, playHeroVideos, { once: true, passive: true })
+  );
 </script>
