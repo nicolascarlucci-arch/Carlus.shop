@@ -18,6 +18,7 @@ import { products } from '@/data/products';
       style="-webkit-mask-image: linear-gradient(to left, black 70%, transparent 100%); mask-image: linear-gradient(to left, black 70%, transparent 100%);"
     >
       <video
+        data-hero-video
         src="/images/products/laufweste-hero-360.mp4"
         poster="/images/products/laufweste-hero-360-poster.jpg"
         class="w-full h-full object-contain object-top"
@@ -28,6 +29,13 @@ import { products } from '@/data/products';
         preload="auto"
         aria-hidden="true"
       ></video>
+      <img
+        src="/images/products/laufweste-hero-360-poster.jpg"
+        alt=""
+        aria-hidden="true"
+        data-hero-video-poster
+        class="pointer-events-none absolute inset-0 w-full h-full object-contain object-top"
+      />
     </div>
     <div class="grain-overlay"></div>
 
@@ -55,8 +63,9 @@ import { products } from '@/data/products';
 
         <!-- Mobile/tablet: image next to the text instead of the
              side-panel treatment (which only works at lg+ widths) -->
-        <div class="lg:hidden shrink-0 w-[58%] sm:w-[52%] fade-in" style="animation-delay: 220ms">
+        <div class="lg:hidden relative shrink-0 w-[58%] sm:w-[52%] fade-in" style="animation-delay: 220ms">
           <video
+            data-hero-video
             src="/images/products/laufweste-hero-360.mp4"
             poster="/images/products/laufweste-hero-360-poster.jpg"
             class="w-full h-full object-contain"
@@ -68,6 +77,14 @@ import { products } from '@/data/products';
             preload="auto"
             aria-hidden="true"
           ></video>
+          <img
+            src="/images/products/laufweste-hero-360-poster.jpg"
+            alt=""
+            aria-hidden="true"
+            data-hero-video-poster
+            class="pointer-events-none absolute inset-0 w-full h-full object-contain"
+            style="aspect-ratio: 1 / 1;"
+          />
         </div>
       </div>
     </div>
@@ -121,18 +138,41 @@ import { products } from '@/data/products';
   // re-checked after the poster paints) — this makes sure the hero videos
   // start immediately instead of sitting on the poster frame.
   function playHeroVideos() {
-    document.querySelectorAll<HTMLVideoElement>('video[autoplay]').forEach((video) => {
+    document.querySelectorAll<HTMLVideoElement>('[data-hero-video]').forEach((video) => {
       video.muted = true;
       video.play().catch(() => {});
     });
   }
-  playHeroVideos();
-  document.addEventListener('astro:page-load', playHeroVideos);
 
-  // Some devices (e.g. iOS in Low Power Mode) block autoplay outright and
-  // show a play button on the video itself. Rather than making someone
-  // find and tap that, retry on the very first interaction anywhere on
-  // the page — most visitors touch/scroll within the first second anyway.
+  // iOS Safari draws its own big center "tap to play" button on top of any
+  // paused <video> whenever autoplay hasn't kicked in yet — CSS tricks to
+  // hide that overlay are unreliable across Safari versions. Instead each
+  // video has a plain <img> of the same poster frame layered on top of it;
+  // once the video actually confirms playback (the `playing` event, not
+  // just a resolved play() promise) the image is removed, revealing the
+  // video underneath. Until then visitors just see a static photo, never
+  // Safari's broken-looking play icon.
+  function hidePosterWhenPlaying(video: HTMLVideoElement) {
+    const poster = video.nextElementSibling;
+    if (!(poster instanceof HTMLElement) || !poster.hasAttribute('data-hero-video-poster')) return;
+    if (!video.paused && video.currentTime > 0) {
+      poster.remove();
+      return;
+    }
+    video.addEventListener('playing', () => poster.remove(), { once: true });
+  }
+
+  function initHeroVideos() {
+    playHeroVideos();
+    document.querySelectorAll<HTMLVideoElement>('[data-hero-video]').forEach(hidePosterWhenPlaying);
+  }
+  initHeroVideos();
+  document.addEventListener('astro:page-load', initHeroVideos);
+
+  // Some devices (e.g. iOS in Low Power Mode) block autoplay outright.
+  // Rather than requiring a tap on the video specifically, retry on the
+  // very first interaction anywhere on the page — most visitors touch/
+  // scroll within the first second anyway.
   ['touchstart', 'click', 'scroll'].forEach((evt) =>
     document.addEventListener(evt, playHeroVideos, { once: true, passive: true })
   );

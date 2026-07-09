@@ -238,17 +238,6 @@ html.js-ready .reveal.is-visible {
 
 /* Faint grain texture for the dark hero, keeps large flat blacks from
    looking dead/flat on screen. */
-/* iOS Safari overlays a big center "tap to play" button on any paused
-   inline <video>, even without the `controls` attribute — shown whenever
-   autoplay didn't kick in yet (slow connection, Low Power Mode, before the
-   first-interaction fallback fires). For the ambient hero videos this reads
-   as a broken/inert video rather than a photo; hiding it just leaves the
-   poster frame, which looks intentional either way. */
-video::-webkit-media-controls-start-playback-button {
-  display: none !important;
-  -webkit-appearance: none;
-}
-
 .grain-overlay {
   position: absolute;
   inset: 0;
