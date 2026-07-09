@@ -3,20 +3,10 @@ export const prerender = true;
 
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import ProductCard from '@/components/ProductCard.astro';
-import Marquee from '@/components/Marquee.astro';
 import { products } from '@/data/products';
-
-const tickerItems = [
-  'Direkt vom Hersteller',
-  'Versand in 2–4 Werktagen',
-  '14 Tage Rückgabe',
-  'Sichere Zahlung via Stripe',
-];
 ---
 
 <BaseLayout title="Home" description="Carlu's Shop – UvsU Shaker & Laufweste. Direkt vom Hersteller. Versand in 2–4 Werktagen nach DE, AT, CH.">
-  <Marquee items={tickerItems} />
-
   <!-- Hero -->
   <section class="relative text-bg overflow-hidden" style="background-color: #020509;">
     <!-- Cinematic vest video — real 360° turntable render, already on a
@@ -30,7 +20,7 @@ const tickerItems = [
       <video
         src="/images/products/laufweste-hero-360.mp4"
         poster="/images/products/laufweste-hero-360-poster.jpg"
-        class="w-full h-full object-contain"
+        class="w-full h-full object-contain object-top"
         autoplay
         muted
         loop
@@ -40,7 +30,7 @@ const tickerItems = [
     </div>
     <div class="grain-overlay"></div>
 
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-24 sm:py-32 lg:py-56">
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-32 lg:py-56">
       <div class="flex items-center gap-5 sm:gap-8 lg:block">
         <div class="flex-1 min-w-0 lg:max-w-xl">
           <p class="mono-tag text-bg/50 mb-2 sm:mb-4 fade-in">— Carlu's Shop</p>
@@ -48,13 +38,13 @@ const tickerItems = [
             Wir liefern die Produkte,<br />
             Du lieferst <span class="text-accent">ab</span>!
           </h1>
-          <p class="mt-4 sm:mt-8 text-xs sm:text-lg lg:text-xl text-bg/70 fade-in" style="animation-delay: 120ms">
+          <p class="hidden sm:block mt-4 sm:mt-8 text-xs sm:text-lg lg:text-xl text-bg/70 fade-in" style="animation-delay: 120ms">
             Qualitätsprodukte, die dir deinen Fitness-Alltag erleichtern.<br />
             Deutsche Marke. Versand nach Deutschland, Österreich, Schweiz.
           </p>
           <a
             href="/produkte"
-            class="sticker mt-5 sm:mt-10 inline-flex items-center gap-1.5 sm:gap-2 bg-accent text-accent-ink font-bold px-4 py-2.5 sm:px-8 sm:py-4 rounded-sm text-sm sm:text-lg fade-in"
+            class="sticker mt-5 sm:mt-10 w-full sm:w-auto flex sm:inline-flex items-center justify-center gap-1.5 sm:gap-2 bg-accent text-accent-ink font-bold px-4 py-2.5 sm:px-8 sm:py-4 rounded-sm text-sm sm:text-lg fade-in"
             style="animation-delay: 180ms"
           >
             Alle Produkte
@@ -121,3 +111,19 @@ const tickerItems = [
     </div>
   </section>
 </BaseLayout>
+
+<script>
+  // Some mobile browsers ignore the `autoplay` attribute unless playback is
+  // also kicked off from script once the element is actually in the DOM
+  // (e.g. if the connection is slow enough that autoplay eligibility is
+  // re-checked after the poster paints) — this makes sure the hero videos
+  // start immediately instead of sitting on the poster frame.
+  function playHeroVideos() {
+    document.querySelectorAll<HTMLVideoElement>('video[autoplay]').forEach((video) => {
+      video.muted = true;
+      video.play().catch(() => {});
+    });
+  }
+  playHeroVideos();
+  document.addEventListener('astro:page-load', playHeroVideos);
+</script>
