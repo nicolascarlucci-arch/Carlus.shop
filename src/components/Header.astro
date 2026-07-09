@@ -1,0 +1,130 @@
+---
+const navLinks = [
+  { href: '/produkte', label: 'Produkte' },
+  { href: '/ratgeber', label: 'Ratgeber' },
+  { href: '/auch-bei-amazon', label: 'Amazon' },
+  { href: '/versand', label: 'Versand' },
+  { href: '/kontakt', label: 'Kontakt' },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<header class="sticky top-0 z-50 border-b border-line bg-bg/90 backdrop-blur">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
+    <a href="/" class="flex items-center py-2 opacity-90 transition-opacity hover:opacity-100">
+      <img src="/images/carlus-logo.png" alt="Carlu's" class="h-8 w-auto sm:h-9" />
+    </a>
+
+    <nav class="hidden sm:flex items-center gap-6 text-sm font-medium">
+      {navLinks.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'relative py-1 border-b-2 transition-colors hover:text-ink',
+            currentPath.startsWith(link.href) ? 'text-ink border-accent' : 'text-muted border-transparent',
+          ]}
+          aria-current={currentPath.startsWith(link.href) ? 'page' : undefined}
+        >
+          {link.label}
+        </a>
+      ))}
+    </nav>
+
+    <div class="flex items-center gap-2">
+      <a
+        href="/warenkorb"
+        class="relative flex items-center gap-1.5 font-medium text-sm hover:text-accent transition-colors p-1"
+        aria-label="Warenkorb"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <path d="M16 10a4 4 0 0 1-8 0"/>
+        </svg>
+        <span
+          id="cart-count"
+          class="text-xs bg-accent text-accent-ink rounded-full w-5 h-5 flex items-center justify-center hidden transition-transform"
+        >0</span>
+      </a>
+
+      <button
+        id="menu-toggle"
+        type="button"
+        class="sm:hidden flex items-center justify-center w-9 h-9 -mr-1.5 text-ink"
+        aria-label="Menü öffnen"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+      >
+        <svg id="menu-icon-open" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="4" y1="7" x2="20" y2="7"/>
+          <line x1="4" y1="12" x2="20" y2="12"/>
+          <line x1="4" y1="17" x2="20" y2="17"/>
+        </svg>
+        <svg id="menu-icon-close" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hidden">
+          <line x1="6" y1="6" x2="18" y2="18"/>
+          <line x1="6" y1="18" x2="18" y2="6"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <nav
+    id="mobile-menu"
+    class="sm:hidden grid grid-rows-[0fr] transition-[grid-template-rows] duration-300 ease-out border-t border-line"
+    style="border-top-width: 0;"
+  >
+    <div class="overflow-hidden">
+      <div class="flex flex-col px-4 py-2">
+        {navLinks.map((link) => (
+          <a
+            href={link.href}
+            class:list={[
+              'py-3 text-sm font-medium border-b border-line last:border-0 transition-colors hover:text-accent',
+              currentPath.startsWith(link.href) ? 'text-ink' : 'text-muted',
+            ]}
+          >
+            {link.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  import { getCartCount, onCartUpdated } from '@/lib/cart';
+
+  function updateBadge(count: number) {
+    const el = document.getElementById('cart-count');
+    if (!el) return;
+    el.textContent = String(count);
+    el.classList.toggle('hidden', count === 0);
+    el.classList.remove('scale-125');
+    // force reflow so the bump animation can retrigger on repeated adds
+    void el.offsetWidth;
+    el.classList.add('scale-125');
+    setTimeout(() => el.classList.remove('scale-125'), 180);
+  }
+
+  updateBadge(getCartCount());
+  onCartUpdated((items) => {
+    const count = items.reduce((s, i) => s + i.quantity, 0);
+    updateBadge(count);
+  });
+
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+  const iconOpen = document.getElementById('menu-icon-open');
+  const iconClose = document.getElementById('menu-icon-close');
+
+  toggle?.addEventListener('click', () => {
+    const isOpen = toggle.getAttribute('aria-expanded') === 'true';
+    const next = !isOpen;
+    toggle.setAttribute('aria-expanded', String(next));
+    menu?.classList.toggle('grid-rows-[1fr]', next);
+    menu?.classList.toggle('grid-rows-[0fr]', !next);
+    if (menu) menu.style.borderTopWidth = next ? '1px' : '0';
+    iconOpen?.classList.toggle('hidden', next);
+    iconClose?.classList.toggle('hidden', !next);
+  });
+</script>

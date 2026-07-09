@@ -1,0 +1,18 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductCard from '@/components/ProductCard.astro';
+import { products } from '@/data/products';
+---
+
+<BaseLayout title="Produkte" description="Alle Produkte im Carlu's Shop – UvsU Shaker und Laufweste.">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-12">
+    <p class="mono-tag mb-2">Kollektion</p>
+    <h1 class="text-3xl font-bold mb-1">Alle Produkte</h1>
+    <p class="text-sm text-muted mb-8">{products.length} Produkte</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {products.map((product) => <ProductCard product={product} />)}
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,144 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Warenkorb" noindex={true}>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+    <h1 class="text-3xl font-bold mb-8">Warenkorb</h1>
+
+    <div id="cart-empty" class="hidden text-center py-16 text-muted">
+      <p class="text-lg mb-4">Dein Warenkorb ist leer.</p>
+      <a href="/produkte" class="underline underline-offset-4 hover:text-ink transition-colors">Zu den Produkten</a>
+    </div>
+
+    <div id="cart-filled" class="hidden">
+      <div id="cart-items" class="space-y-4 mb-8"></div>
+
+      <div class="spec-rule pt-6 bg-panel/40 rounded-sm px-4 -mx-4 sm:px-5 sm:-mx-5 pb-5">
+        <div class="flex justify-between items-center mb-2 pt-1">
+          <span class="text-muted text-sm">Zwischensumme</span>
+          <span id="subtotal" class="font-medium font-mono"></span>
+        </div>
+        <div class="flex justify-between items-center mb-4">
+          <span class="text-muted text-sm">Versand</span>
+          <span id="shipping-note" class="text-sm font-medium font-mono"></span>
+        </div>
+        <div class="flex justify-between items-center text-lg font-bold border-t border-line pt-4">
+          <span>Gesamt (inkl. MwSt.)</span>
+          <span id="total" class="font-mono"></span>
+        </div>
+      </div>
+
+      <button
+        id="checkout-btn"
+        class="sticker mt-6 w-full bg-accent text-accent-ink font-bold py-3 px-6 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed"
+      >
+        Zur Kasse →
+      </button>
+      <p class="text-xs text-center text-muted mt-3">
+        Sichere Zahlung via Stripe · Kreditkarte · SEPA · PayPal
+      </p>
+    </div>
+
+    <!-- Line item template -->
+    <template id="cart-item-template">
+      <div class="fade-in flex gap-4 border border-line rounded-sm p-4 transition-shadow">
+        <img data-bind="image" class="w-20 h-20 object-cover rounded-sm bg-panel flex-shrink-0" alt="" />
+        <div class="flex-1 min-w-0">
+          <p data-bind="label" class="font-medium truncate"></p>
+          <p data-bind="price" class="text-sm text-muted mt-0.5 font-mono"></p>
+          <div class="flex items-center gap-3 mt-2">
+            <button data-action="dec" class="w-7 h-7 border border-line rounded-sm hover:bg-panel transition-colors text-sm" aria-label="Menge verringern">−</button>
+            <span data-bind="qty" class="text-sm font-mono w-6 text-center"></span>
+            <button data-action="inc" class="w-7 h-7 border border-line rounded-sm hover:bg-panel transition-colors text-sm" aria-label="Menge erhöhen">+</button>
+            <button data-action="remove" class="ml-auto text-xs text-muted underline hover:text-accent transition-colors">Entfernen</button>
+          </div>
+        </div>
+      </div>
+    </template>
+  </div>
+</BaseLayout>
+
+<script>
+  import { getCart, getCartTotalEUR, updateQuantity, removeFromCart, onCartUpdated } from '@/lib/cart';
+  import { SHIPPING } from '@/data/shipping';
+
+  const fmtEUR = (n: number) => n.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+
+  function renderCart() {
+    const cart = getCart();
+    const emptyEl = document.getElementById('cart-empty')!;
+    const filledEl = document.getElementById('cart-filled')!;
+
+    if (cart.length === 0) {
+      emptyEl.classList.remove('hidden');
+      filledEl.classList.add('hidden');
+      return;
+    }
+
+    emptyEl.classList.add('hidden');
+    filledEl.classList.remove('hidden');
+
+    const container = document.getElementById('cart-items')!;
+    const template = document.getElementById('cart-item-template') as HTMLTemplateElement;
+    container.innerHTML = '';
+
+    for (const item of cart) {
+      const clone = template.content.cloneNode(true) as DocumentFragment;
+      const el = clone.firstElementChild as HTMLElement;
+
+      (el.querySelector('[data-bind="image"]') as HTMLImageElement).src = item.image ?? '/images/products/placeholder.jpg';
+      (el.querySelector('[data-bind="label"]') as HTMLElement).textContent = item.label;
+      (el.querySelector('[data-bind="price"]') as HTMLElement).textContent = fmtEUR(item.priceEUR);
+      (el.querySelector('[data-bind="qty"]') as HTMLElement).textContent = String(item.quantity);
+
+      el.querySelector('[data-action="dec"]')?.addEventListener('click', () => updateQuantity(item.variantId, item.quantity - 1));
+      el.querySelector('[data-action="inc"]')?.addEventListener('click', () => updateQuantity(item.variantId, item.quantity + 1));
+      el.querySelector('[data-action="remove"]')?.addEventListener('click', () => {
+        el.classList.add('fade-out');
+        el.classList.remove('fade-in');
+        setTimeout(() => removeFromCart(item.variantId), 180);
+      });
+
+      container.appendChild(clone);
+    }
+
+    const subtotal = getCartTotalEUR();
+    const shipping = subtotal >= SHIPPING.freeAboveEUR ? 0 : SHIPPING.flatRateEUR;
+    const total = subtotal + shipping;
+
+    document.getElementById('subtotal')!.textContent = fmtEUR(subtotal);
+    document.getElementById('shipping-note')!.textContent = shipping === 0 ? 'Kostenlos' : fmtEUR(shipping);
+    document.getElementById('total')!.textContent = fmtEUR(total);
+  }
+
+  renderCart();
+  onCartUpdated(renderCart);
+
+  document.getElementById('checkout-btn')?.addEventListener('click', async () => {
+    const btn = document.getElementById('checkout-btn') as HTMLButtonElement;
+    btn.disabled = true;
+    btn.textContent = 'Bitte warten…';
+
+    try {
+      const cart = getCart();
+      const res = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ items: cart }),
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        alert(data.error ?? 'Fehler beim Checkout. Bitte versuche es erneut.');
+        btn.disabled = false;
+        btn.textContent = 'Zur Kasse →';
+      }
+    } catch {
+      alert('Netzwerkfehler. Bitte versuche es erneut.');
+      btn.disabled = false;
+      btn.textContent = 'Zur Kasse →';
+    }
+  });
+</script>

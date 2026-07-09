@@ -1,0 +1,248 @@
+@import "tailwindcss";
+
+@import "@fontsource/space-grotesk/400.css";
+@import "@fontsource/space-grotesk/500.css";
+@import "@fontsource/space-grotesk/600.css";
+@import "@fontsource/space-grotesk/700.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/anton/400.css";
+@import "@fontsource/oswald/700.css";
+
+/*
+  Carlu's design tokens — "Street Athletic"
+  -------------------------------------------
+  Bone + ink base, acid-lime primary, amber secondary — no red/orange
+  anywhere in the palette (explicit user requirement). Anton display
+  headlines (uppercase, condensed, loud), spray-drip dividers instead
+  of tick-mark rulers, sticker-shadow badges. Everything routes
+  through these tokens so components stay in one visual system.
+
+  Note: `--color-teal` is a legacy variable name from the previous
+  design pass — it now holds the secondary "amber" accent, not an
+  actual teal (and not orange/red — that was tried and explicitly
+  rejected). Renaming every `text-teal`/`bg-teal` usage across the
+  codebase wasn't worth the churn; treat it as "secondary accent".
+*/
+@theme {
+  --font-sans: "Space Grotesk", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+  --font-display: "Anton", "Space Grotesk", system-ui, sans-serif;
+
+  --color-bg: #F2ECDD;
+  --color-ink: #0A0A0A;
+  --color-surface: #FFFFFF;
+  --color-panel: #E7DFC9;
+  --color-line: #DBCFAE;
+  --color-muted: #6E6857;
+  --color-accent: #D4FF3D;
+  --color-accent-ink: #0A0A0A;
+  --color-teal: #FFB800;
+  --color-teal-ink: #0A0A0A;
+  --color-success: #1F8A57;
+}
+
+html {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100dvh;
+}
+
+/* Loud, condensed display headline treatment — opt-in via .headline
+   (not applied to all h1s globally). Anton has a confirmed Chromium
+   rendering bug: any German umlaut (Ü/Ö/Ä) that lands on a wrapped
+   *second* line of text loses its diaeresis dots — the first line is
+   always fine, only continuation lines are affected. First-line text
+   is unaffected regardless of length. So: only use .headline on
+   headlines where an umlaut word is guaranteed to be the first word
+   (or where there's no umlaut at all) — never rely on luck with
+   wrapping. Utility/legal-page h1s intentionally don't use this class
+   and stay in the default sans font, where umlauts always render
+   correctly on any line. */
+.headline {
+  font-family: var(--font-display);
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  line-height: 0.92;
+}
+
+/* Visible keyboard focus everywhere — no outline: none anywhere. */
+:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.mono-tag {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  color: var(--color-muted);
+}
+
+/* Signature element: a spray-paint drip rule. Thick lime border with
+   irregular drip blobs hanging below, tiled horizontally. Reads on
+   both light (bone) and dark (ink) sections since lime pops on both —
+   applied to the same elements the old tick-mark .spec-rule was on,
+   so every existing usage upgrades automatically. */
+.spec-rule {
+  position: relative;
+  border-top: 4px solid var(--color-accent);
+}
+.spec-rule::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 0;
+  right: 0;
+  height: 12px;
+  pointer-events: none;
+  background-repeat: repeat-x;
+  background-size: 96px 12px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='12'%3E%3Cpath d='M18 0 q5 0 5 7 q0 4 -5 4 q-5 0 -5 -4 q0 -7 5 -7z' fill='%23D4FF3D'/%3E%3Cpath d='M52 0 q4 0 4 9 q0 3 -4 3 q-4 0 -4 -3 q0 -9 4 -9z' fill='%23D4FF3D'/%3E%3Cpath d='M78 0 q3.5 0 3.5 5 q0 3 -3.5 3 q-3.5 0 -3.5 -3 q0 -5 3.5 -5z' fill='%23D4FF3D'/%3E%3C/svg%3E");
+}
+
+/* Sticker badge: rotated, thick border, hard offset shadow — like a
+   sticker slapped on. Use on CTAs and badges that should feel loud. */
+.sticker {
+  transform: rotate(-1.5deg);
+  border: 3px solid var(--color-ink);
+  box-shadow: 4px 4px 0 var(--color-ink);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.sticker:hover {
+  transform: rotate(0deg) translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--color-ink);
+}
+.sticker:active {
+  transform: translate(1px, 1px);
+  box-shadow: 2px 2px 0 var(--color-ink);
+}
+
+/* Halftone dot texture — subtle print-press overlay for section
+   backgrounds. Combine with an opacity utility on the element. */
+.halftone-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(currentColor 1.2px, transparent 1.4px);
+  background-size: 12px 12px;
+}
+
+/* Gentle content fade/rise-in, used for cart lines and toasts. */
+.fade-in {
+  animation: fade-in 0.35s ease both;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-out {
+  animation: fade-out 0.2s ease both;
+}
+@keyframes fade-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+}
+
+/* Astro View Transitions: quick, direction-agnostic cross-fade so
+   in-site navigation never hard-flashes to white. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.18s;
+}
+
+/* Scroll-reveal: progressive enhancement only. Content is fully visible
+   by default so it never depends on JS to be seen (no-JS browsers,
+   crawlers, slow/failed scripts, reduced-motion). Only once the head
+   script confirms JS ran (html.js-ready) do .reveal elements start
+   hidden/offset, then JS (see BaseLayout) adds .is-visible via
+   IntersectionObserver as they enter the viewport. */
+.reveal {
+  opacity: 1;
+  transform: none;
+}
+html.js-ready .reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+html.js-ready .reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.js-ready .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Infinite scrolling marquee ticker. */
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 22s linear infinite;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* Soft ambient glow used behind hero copy for depth. */
+.hero-glow {
+  position: absolute;
+  inset: -20% -10% auto -10%;
+  height: 140%;
+  background:
+    radial-gradient(ellipse 60% 50% at 25% 20%, color-mix(in oklab, var(--color-accent) 40%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 45% at 80% 60%, color-mix(in oklab, var(--color-teal) 35%, transparent), transparent 70%);
+  filter: blur(40px);
+  pointer-events: none;
+}
+
+/* Faint grain texture for the dark hero, keeps large flat blacks from
+   looking dead/flat on screen. */
+.grain-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.5;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+}

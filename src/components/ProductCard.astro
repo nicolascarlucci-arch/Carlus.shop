@@ -1,0 +1,51 @@
+---
+import type { Product } from '@/data/products';
+import { getFromPrice, isOutOfStock } from '@/data/products';
+
+interface Props {
+  product: Product;
+}
+
+const { product } = Astro.props;
+const fromPrice = getFromPrice(product);
+const outOfStock = isOutOfStock(product);
+---
+
+<a
+  href={`/produkte/${product.slug}`}
+  class="group block bg-surface border border-line rounded-sm overflow-hidden transition-all duration-300 hover:border-ink hover:-translate-y-1.5 hover:shadow-[0_20px_50px_-15px_var(--color-ink)]"
+>
+  <div class="relative aspect-square overflow-hidden bg-panel">
+    <img
+      src={product.images[0]}
+      alt={product.name}
+      class:list={['w-full h-full object-cover transition-transform duration-500 group-hover:scale-105', { 'opacity-50 grayscale': outOfStock }]}
+      loading="lazy"
+      transition:name={`product-image-${product.slug}`}
+    />
+    {product.images[1] && !outOfStock && (
+      <img
+        src={product.images[1]}
+        alt=""
+        aria-hidden="true"
+        class="absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        loading="lazy"
+      />
+    )}
+    {outOfStock && (
+      <span class="sticker absolute top-3 left-3 bg-ink text-bg mono-tag px-2.5 py-1 rounded-sm">Ausverkauft</span>
+    )}
+  </div>
+  <div class="p-4">
+    <p class="mono-tag mb-1">{product.tagline}</p>
+    <div class="flex items-center justify-between gap-3">
+      <h3 class="font-bold text-lg">{product.name}</h3>
+      <span class="text-ink opacity-0 -translate-x-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-x-0" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </span>
+    </div>
+    <p class="mt-2 text-sm text-muted">
+      {outOfStock ? 'Derzeit nicht verfügbar' : `ab ${fromPrice.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}`}
+    </p>
+  </div>
+</a>

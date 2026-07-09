@@ -1,0 +1,50 @@
+---
+export const prerender = false;
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { getStripeClient } from '@/lib/stripe';
+
+const sessionId = Astro.url.searchParams.get('session_id');
+let customerEmail = '';
+let orderTotal = '';
+
+if (sessionId) {
+  try {
+    const stripe = getStripeClient();
+    const session = await stripe.checkout.sessions.retrieve(sessionId);
+    customerEmail = session.customer_details?.email ?? '';
+    const amount = session.amount_total ?? 0;
+    orderTotal = (amount / 100).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+  } catch {
+    // session not found — still show success page
+  }
+}
+---
+
+<BaseLayout title="Bestellung erfolgreich" noindex={true}>
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 py-20 text-center">
+    <div class="w-16 h-16 bg-success/10 rounded-full flex items-center justify-center mx-auto mb-6 fade-in">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--color-success)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <h1 class="text-3xl font-bold mb-3">Vielen Dank für deine Bestellung!</h1>
+    {customerEmail && (
+      <p class="text-muted mb-2">
+        Eine Bestätigung wird an <strong>{customerEmail}</strong> gesendet.
+      </p>
+    )}
+    {orderTotal && (
+      <p class="text-muted mb-6">Bestellwert: <strong>{orderTotal}</strong></p>
+    )}
+    <p class="text-sm text-muted mb-8">
+      Deine Rechnung erhältst du separat per E-Mail von Stripe.
+    </p>
+    <a href="/produkte" class="sticker inline-block bg-ink text-bg font-bold px-6 py-3 rounded-sm">
+      Weiter einkaufen
+    </a>
+  </div>
+</BaseLayout>
+
+<script>
+  import { clearCart } from '@/lib/cart';
+  clearCart();
+</script>

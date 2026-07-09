@@ -1,0 +1,49 @@
+---
+export const prerender = true;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { SHIPPING } from '@/data/shipping';
+---
+
+<BaseLayout title="AGB" noindex={true}>
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 py-12">
+    <p class="mono-tag mb-2">Legal</p>
+    <h1 class="text-3xl font-bold mb-8">Allgemeine Geschäftsbedingungen</h1>
+
+    <div class="space-y-6 text-sm text-muted">
+      <section>
+        <h2 class="font-semibold text-ink mb-2">§ 1 Geltungsbereich</h2>
+        <p>Diese Allgemeinen Geschäftsbedingungen gelten für alle Bestellungen, die über den Online-Shop carlus.shop abgeschlossen werden. Betreiber ist ⚠ PLATZHALTER.</p>
+      </section>
+
+      <section class="spec-rule pt-4">
+        <h2 class="font-semibold text-ink mb-2">§ 2 Vertragsschluss</h2>
+        <p>Mit Abschluss des Bestellvorgangs über Stripe Checkout kommt ein bindender Kaufvertrag zustande. Die Bestätigungs-E-Mail gilt als Auftragsbestätigung.</p>
+      </section>
+
+      <section class="spec-rule pt-4">
+        <h2 class="font-semibold text-ink mb-2">§ 3 Preise und Zahlung</h2>
+        <p>Alle Preise verstehen sich in Euro inkl. gesetzlicher Mehrwertsteuer. Die Zahlung erfolgt über Stripe (Kreditkarte, SEPA-Lastschrift).</p>
+      </section>
+
+      <section class="spec-rule pt-4">
+        <h2 class="font-semibold text-ink mb-2">§ 4 Lieferung</h2>
+        <p>Wir liefern an Adressen in {SHIPPING.countries.join(', ')}. Die Lieferzeit beträgt {SHIPPING.estimatedDaysMin}–{SHIPPING.estimatedDaysMax} Werktage nach Zahlungseingang. Versandkosten: {SHIPPING.flatRateEUR.toFixed(2).replace('.', ',')} € (kostenlos ab {SHIPPING.freeAboveEUR} € Bestellwert).</p>
+      </section>
+
+      <section class="spec-rule pt-4">
+        <h2 class="font-semibold text-ink mb-2">§ 5 Widerrufsrecht</h2>
+        <p>Verbrauchern steht ein gesetzliches Widerrufsrecht zu. Details findest du in unserer <a href="/widerruf" class="underline hover:text-accent">Widerrufsbelehrung</a>.</p>
+      </section>
+
+      <section class="spec-rule pt-4">
+        <h2 class="font-semibold text-ink mb-2">§ 6 Gewährleistung</h2>
+        <p>Es gelten die gesetzlichen Gewährleistungsrechte. Die Gewährleistungsfrist beträgt 2 Jahre ab Lieferung.</p>
+      </section>
+
+      <section class="spec-rule pt-4">
+        <h2 class="font-semibold text-ink mb-2">§ 7 Anwendbares Recht</h2>
+        <p>Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts.</p>
+      </section>
+    </div>
+  </div>
+</BaseLayout>

@@ -1,0 +1,248 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import { products, getProductBySlug, isOutOfStock } from '@/data/products';
+
+export function getStaticPaths() {
+  return products.map((p) => ({ params: { slug: p.slug } }));
+}
+
+const { slug } = Astro.params;
+const product = getProductBySlug(slug!);
+
+if (!product) {
+  return Astro.redirect('/404');
+}
+
+const defaultVariant = product.variants[0];
+const outOfStock = isOutOfStock(product);
+---
+
+<BaseLayout title={product.name} description={product.description}>
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <a href="/produkte" class="text-sm font-medium text-muted hover:text-accent transition-colors">← Alle Produkte</a>
+
+    <div class="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-12">
+      <!-- Images -->
+      <div class="space-y-3">
+        <div class="aspect-square bg-panel rounded-sm overflow-hidden">
+          <img
+            id="main-image"
+            src={product.images[0]}
+            alt={product.name}
+            class="w-full h-full object-contain"
+            transition:name={`product-image-${product.slug}`}
+          />
+        </div>
+        {product.images.length > 1 && (
+          <div class="flex flex-wrap gap-3">
+            {product.images.map((img, i) => (
+              <button
+                type="button"
+                class="w-20 h-20 bg-panel border-2 border-transparent hover:border-ink rounded-sm overflow-hidden transition-colors"
+                data-img={img}
+                aria-label={`Bild ${i + 1} anzeigen`}
+              >
+                <img src={img} alt={`${product.name} ${i + 1}`} class="w-full h-full object-contain" />
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <!-- Details -->
+      <div>
+        <div class="flex items-center gap-3 mb-2">
+          <p class="mono-tag">{product.tagline}</p>
+          {outOfStock && (
+            <span class="sticker bg-ink text-bg mono-tag px-2.5 py-1 rounded-sm">Ausverkauft</span>
+          )}
+        </div>
+        <h1 class="headline text-4xl mb-2">{product.name}</h1>
+        <p class="text-muted mb-6">{product.description}</p>
+
+        <form
+          id="add-to-cart-form"
+          class="space-y-5"
+          data-slug={product.slug}
+          data-name={product.name}
+          data-image={product.images[0]}
+        >
+          <!-- Variant selector -->
+          <div>
+            <label class="block text-sm font-medium mb-2" for="variant-select">Variante</label>
+            <div class="relative">
+              <select
+                id="variant-select"
+                name="variantId"
+                disabled={outOfStock}
+                class="w-full appearance-none border border-line rounded-sm px-3 py-2.5 pr-9 bg-surface focus:outline-none focus:border-ink transition-colors disabled:opacity-50"
+              >
+                {product.variants.map((v) => (
+                  <option value={v.id} data-price={v.priceEUR} data-label={v.label}>
+                    {v.label} – {v.priceEUR.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+                  </option>
+                ))}
+              </select>
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-muted"><path d="m6 9 6 6 6-6"/></svg>
+            </div>
+          </div>
+
+          <!-- Quantity -->
+          <div>
+            <label class="block text-sm font-medium mb-2" for="quantity-input">Menge</label>
+            <div class="inline-flex items-center border border-line rounded-sm">
+              <button type="button" id="qty-minus" disabled={outOfStock} class="w-9 h-10 flex items-center justify-center hover:bg-panel transition-colors disabled:opacity-50 disabled:hover:bg-transparent" aria-label="Menge verringern">−</button>
+              <input
+                id="quantity-input"
+                type="number"
+                name="quantity"
+                min="1"
+                max="10"
+                value="1"
+                disabled={outOfStock}
+                class="w-12 h-10 border-x border-line bg-surface text-center font-mono focus:outline-none disabled:opacity-50 [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              <button type="button" id="qty-plus" disabled={outOfStock} class="w-9 h-10 flex items-center justify-center hover:bg-panel transition-colors disabled:opacity-50 disabled:hover:bg-transparent" aria-label="Menge erhöhen">+</button>
+            </div>
+          </div>
+
+          <!-- Price display -->
+          <p class="text-2xl font-bold font-mono transition-all" id="price-display">
+            {defaultVariant.priceEUR.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+          </p>
+
+          <button
+            type="submit"
+            id="add-to-cart-btn"
+            disabled={outOfStock}
+            class:list={[
+              'w-full bg-ink text-bg font-bold py-3 px-6 rounded-sm transition-all hover:bg-accent hover:text-accent-ink disabled:opacity-50 disabled:pointer-events-none',
+              { sticker: !outOfStock },
+            ]}
+          >
+            {outOfStock ? 'Ausverkauft' : 'In den Warenkorb'}
+          </button>
+        </form>
+
+        <!-- Spec sheet -->
+        {Object.keys(product.specs).length > 0 && (
+          <div class="mt-10 spec-rule pt-6">
+            <p class="mono-tag mb-4">Spezifikationen</p>
+            <dl class="space-y-2">
+              {Object.entries(product.specs).map(([key, val]) => (
+                <div class="flex justify-between text-sm border-b border-line pb-2">
+                  <dt class="text-muted">{key}</dt>
+                  <dd class="font-medium text-right">{val}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+        )}
+      </div>
+    </div>
+
+    {product.aPlusContent && product.aPlusContent.length > 0 && (
+      <div class="mt-16 spec-rule pt-8">
+        <p class="mono-tag mb-4">Mehr erfahren</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {product.aPlusContent.map((img, i) => (
+            <img
+              src={img}
+              alt={`${product.name} – Detail ${i + 1}`}
+              class="w-full rounded-sm bg-panel"
+              loading="lazy"
+            />
+          ))}
+        </div>
+      </div>
+    )}
+
+    {product.videos && product.videos.length > 0 && (
+      <div class="mt-16 spec-rule pt-8">
+        <p class="mono-tag mb-4">Video</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl">
+          {product.videos.map((video) => (
+            <video
+              src={video.src}
+              poster={video.poster}
+              controls
+              playsinline
+              preload="none"
+              class="w-full aspect-[9/16] rounded-sm bg-panel object-cover"
+            />
+          ))}
+        </div>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  import { addToCart } from '@/lib/cart';
+
+  const form = document.getElementById('add-to-cart-form') as HTMLFormElement | null;
+  const select = document.getElementById('variant-select') as HTMLSelectElement | null;
+  const priceDisplay = document.getElementById('price-display');
+  const qtyInput = document.getElementById('quantity-input') as HTMLInputElement | null;
+  const mainImage = document.getElementById('main-image') as HTMLImageElement | null;
+
+  select?.addEventListener('change', () => {
+    const opt = select.options[select.selectedIndex] as HTMLOptionElement & { dataset: { price: string } };
+    const price = parseFloat(opt.dataset.price);
+    if (priceDisplay) {
+      priceDisplay.textContent = price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+    }
+  });
+
+  document.querySelectorAll<HTMLButtonElement>('[data-img]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (mainImage && btn.dataset.img) mainImage.src = btn.dataset.img;
+    });
+  });
+
+  document.getElementById('qty-minus')?.addEventListener('click', () => {
+    if (!qtyInput) return;
+    qtyInput.value = String(Math.max(1, parseInt(qtyInput.value || '1', 10) - 1));
+  });
+  document.getElementById('qty-plus')?.addEventListener('click', () => {
+    if (!qtyInput) return;
+    qtyInput.value = String(Math.min(10, parseInt(qtyInput.value || '1', 10) + 1));
+  });
+
+  form?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!select) return;
+
+    const variantId = select.value;
+    const opt = select.options[select.selectedIndex] as HTMLOptionElement & { dataset: { price: string; label: string } };
+    const quantity = parseInt(qtyInput?.value ?? '1') || 1;
+
+    const productSlug = form.dataset.slug ?? '';
+    const productName = form.dataset.name ?? '';
+    const productImage = form.dataset.image ?? '';
+
+    addToCart({
+      variantId,
+      productSlug,
+      label: `${productName} – ${opt.dataset.label}`,
+      priceEUR: parseFloat(opt.dataset.price),
+      image: productImage,
+      quantity,
+    });
+
+    const btn = document.getElementById('add-to-cart-btn') as HTMLButtonElement | null;
+    if (btn) {
+      const orig = btn.textContent ?? '';
+      btn.disabled = true;
+      btn.textContent = '✓ Hinzugefügt';
+      btn.classList.add('bg-success');
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.classList.remove('bg-success');
+        btn.disabled = false;
+      }, 1500);
+    }
+  });
+</script>

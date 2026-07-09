@@ -1,0 +1,80 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Header from '@/components/Header.astro';
+import Footer from '@/components/Footer.astro';
+import '@/styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const { title, description = 'Carlu\'s Shop – UvsU Shaker & Laufweste. Direkt vom Hersteller.', noindex = false } = Astro.props;
+const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? 'https://carlus.shop';
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      // Progressive enhancement gate for .reveal (see global.css): only
+      // hide reveal-on-scroll content once we know JS actually runs.
+      document.documentElement.classList.add('js-ready');
+    </script>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title} – Carlu's Shop</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <meta property="og:title" content={`${title} – Carlu's Shop`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:type" content="website" />
+    <ClientRouter />
+  </head>
+  <body class="min-h-screen flex flex-col">
+    <Header />
+    <main class="flex-1" transition:animate="fade">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<script>
+  function initScrollReveal() {
+    const els = document.querySelectorAll<HTMLElement>('.reveal:not(.is-visible)');
+    if (!els.length) return;
+
+    // Defensive fallback: if IntersectionObserver is unsupported, or an
+    // element somehow never gets flagged as intersecting, force it
+    // visible after a short delay rather than leaving real content
+    // (product listings, etc.) permanently hidden.
+    if (!('IntersectionObserver' in window)) {
+      els.forEach((el) => el.classList.add('is-visible'));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('is-visible');
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -10% 0px' }
+    );
+
+    els.forEach((el) => observer.observe(el));
+    setTimeout(() => els.forEach((el) => el.classList.add('is-visible')), 2000);
+  }
+
+  initScrollReveal();
+  document.addEventListener('astro:page-load', initScrollReveal);
+</script>

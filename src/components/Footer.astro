@@ -1,0 +1,24 @@
+---
+const year = new Date().getFullYear();
+---
+
+<footer class="mt-16">
+  <div class="spec-rule max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-8">
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <nav class="flex flex-wrap justify-center gap-4 text-sm text-muted">
+        <a href="/agb" class="hover:text-ink transition-colors">AGB</a>
+        <a href="/datenschutz" class="hover:text-ink transition-colors">Datenschutz</a>
+        <a href="/widerruf" class="hover:text-ink transition-colors">Widerrufsrecht</a>
+        <a href="/impressum" class="hover:text-ink transition-colors">Impressum</a>
+        <a href="/versand" class="hover:text-ink transition-colors">Versand</a>
+        <a href="/auch-bei-amazon" class="hover:text-ink transition-colors">Auch bei Amazon</a>
+      </nav>
+      <p class="mono-tag">
+        Zahlung via Stripe · Kreditkarte · SEPA
+      </p>
+    </div>
+    <p class="text-center text-xs text-muted mt-6">
+      © {year} Carlu's – Alle Rechte vorbehalten
+    </p>
+  </div>
+</footer>

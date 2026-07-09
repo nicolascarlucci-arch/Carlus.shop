@@ -1,0 +1,15 @@
+---
+export const prerender = true;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Seite nicht gefunden" noindex={true}>
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 py-20 text-center">
+    <p class="mono-tag mb-4">404</p>
+    <h1 class="text-4xl font-bold mb-4">Seite nicht gefunden</h1>
+    <p class="text-muted mb-8">Diese Seite existiert nicht oder wurde verschoben.</p>
+    <a href="/" class="inline-block bg-ink text-bg font-semibold px-6 py-3 rounded-full transition-all hover:bg-accent hover:scale-[1.02]">
+      Zur Startseite
+    </a>
+  </div>
+</BaseLayout>

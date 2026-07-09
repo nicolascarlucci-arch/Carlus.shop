@@ -1,0 +1,105 @@
+---
+export const prerender = true;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const shakerAmazonUrl = 'https://www.amazon.de/dp/B0FTPTFJC7?tag=carlus-21';
+const shakerBadges = ['Prime-Versand', 'Käuferschutz', '128+ Bewertungen'];
+
+const vestAmazonUrl = 'https://www.amazon.de/dp/B0FNNFCF8R?tag=carlus-21';
+const vestBadges = ['Prime-Versand', 'Käuferschutz'];
+---
+
+<BaseLayout title="Auch bei Amazon" description="Der Carlu's UvsU Shaker und die Carlu's Laufweste sind zusätzlich bei Amazon.de erhältlich – mit Prime-Versand und Käuferschutz.">
+  <!-- Hero -->
+  <section class="relative bg-ink text-bg overflow-hidden">
+    <div class="hero-glow"></div>
+    <div class="grain-overlay"></div>
+    <div class="relative max-w-2xl mx-auto px-4 sm:px-6 py-20 sm:py-28">
+      <p class="mono-tag text-bg/50 mb-4 fade-in">— Verkaufskanäle</p>
+      <h1 class="headline text-5xl sm:text-6xl fade-in" style="animation-delay: 60ms">
+        Erhältlich bei <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-teal">Amazon</span>.
+      </h1>
+      <p class="mt-6 text-lg text-bg/70 fade-in" style="animation-delay: 120ms">
+        Der <strong class="text-bg">Carlu's UvsU Shaker</strong> (Schwarz + Mint) und die <strong class="text-bg">Carlu's Laufweste</strong> findest
+        du zusätzlich bei Amazon.de – mit Prime-Versand, Kundenrezensionen und dem gewohnten Amazon-Käuferschutz.
+      </p>
+    </div>
+    <div class="spec-rule"></div>
+  </section>
+
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 py-16">
+    <div class="flex flex-col gap-6">
+      <div class="reveal group bg-surface border border-line rounded-sm p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_-15px_var(--color-accent)]">
+        <img
+          src="/images/products/shaker-hero.png"
+          alt="Carlu's UvsU Shaker"
+          class="w-28 h-28 object-contain bg-panel rounded-sm shrink-0 transition-transform duration-500 group-hover:scale-105"
+        />
+        <div class="flex-1">
+          <p class="font-bold text-lg mb-1">Carlu's UvsU Shaker – Schwarz/Mint</p>
+          <p class="text-sm text-muted mb-3">⭐ 4.7/5 · 128+ Bewertungen auf Amazon.de</p>
+          <div class="flex flex-wrap gap-2 mb-5">
+            {shakerBadges.map((b) => (
+              <span class="mono-tag bg-panel px-2.5 py-1 rounded-full">{b}</span>
+            ))}
+          </div>
+          <a
+            href={shakerAmazonUrl}
+            rel="sponsored noopener noreferrer"
+            target="_blank"
+            class="sticker inline-flex items-center gap-2 bg-ink text-bg font-bold px-7 py-3.5 rounded-sm"
+            aria-label="Carlu's UvsU Shaker auf Amazon kaufen (öffnet Amazon.de)"
+          >
+            Auf Amazon kaufen ↗
+          </a>
+        </div>
+      </div>
+
+      <div class="reveal group bg-surface border border-line rounded-sm p-6 sm:p-8 flex flex-col sm:flex-row items-start sm:items-center gap-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_20px_60px_-15px_var(--color-accent)]">
+        <img
+          src="/images/products/laufweste-hero.png"
+          alt="Carlu's Laufweste"
+          class="w-28 h-28 object-contain bg-panel rounded-sm shrink-0 transition-transform duration-500 group-hover:scale-105"
+        />
+        <div class="flex-1">
+          <p class="font-bold text-lg mb-1">Carlu's Laufweste</p>
+          <div class="flex flex-wrap gap-2 mb-5">
+            {vestBadges.map((b) => (
+              <span class="mono-tag bg-panel px-2.5 py-1 rounded-full">{b}</span>
+            ))}
+          </div>
+          <a
+            href={vestAmazonUrl}
+            rel="sponsored noopener noreferrer"
+            target="_blank"
+            class="sticker inline-flex items-center gap-2 bg-ink text-bg font-bold px-7 py-3.5 rounded-sm"
+            aria-label="Carlu's Laufweste auf Amazon kaufen (öffnet Amazon.de)"
+          >
+            Auf Amazon kaufen ↗
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 spec-rule pt-8 grid grid-cols-1 sm:grid-cols-2 gap-8 reveal">
+      <div>
+        <p class="mono-tag mb-2 text-teal">Warum zwei Kanäle?</p>
+        <p class="text-sm text-muted">
+          Bestellst du direkt bei uns, sparst du dir keine Amazon-Gebühren – du unterstützt Carlu's als kleine Marke direkt.
+          Bestellst du über Amazon, profitierst du von Prime-Versand und dem dortigen Rückgabeprozess.
+        </p>
+      </div>
+      <div>
+        <p class="mono-tag mb-2 text-accent">Nur direkt erhältlich</p>
+        <p class="text-sm text-muted">
+          Die <strong class="text-ink">Schwarz/Weiß-Variante</strong> des Shakers und unser
+          weiteres Sortiment gibt es aktuell ausschließlich hier im <a href="/produkte" class="underline hover:text-accent transition-colors">Carlu's Shop</a>.
+        </p>
+      </div>
+    </div>
+
+    <p class="mt-8 text-xs text-muted reveal">
+      Affiliate-Link. Der Kauf erfolgt über Amazon.de – für den dortigen Kaufvertrag gelten die AGB und Richtlinien von Amazon.
+    </p>
+  </div>
+</BaseLayout>

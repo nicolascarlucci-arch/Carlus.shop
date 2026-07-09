@@ -1,0 +1,84 @@
+---
+export const prerender = true;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Widerrufsrecht" noindex={true}>
+  <div class="max-w-2xl mx-auto px-4 sm:px-6 py-12">
+    <p class="mono-tag mb-2">Legal</p>
+    <h1 class="text-3xl font-bold mb-8">Widerrufsbelehrung</h1>
+
+    <div class="space-y-6 text-sm text-muted">
+      <section>
+        <h2 class="font-semibold text-ink mb-2">Widerrufsrecht</h2>
+        <p>
+          Du hast das Recht, binnen vierzehn Tagen ohne Angabe von Gründen diesen Vertrag zu widerrufen.
+          Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem du oder ein von dir benannter Dritter
+          (der nicht der Beförderer ist) die Waren in Besitz genommen hat.
+        </p>
+        <p class="mt-2">
+          Um dein Widerrufsrecht auszuüben, musst du uns
+        </p>
+        <address class="mt-2 not-italic rounded-xl border border-line bg-panel/40 p-5">
+          Nicolas Carlucci, Carlucci Store<br />
+          Tulpenstraße 5<br />
+          71272 Renningen<br />
+          E-Mail: kontakt@carlus.shop<br />
+          Telefon: ⚠ PLATZHALTER: Telefonnummer eintragen
+        </address>
+        <p class="mt-2">
+          mittels einer eindeutigen Erklärung (z. B. ein mit der Post versandter Brief oder eine
+          E-Mail) über deinen Entschluss, diesen Vertrag zu widerrufen, informieren. Du kannst dafür
+          das untenstehende Muster-Widerrufsformular verwenden, das ist aber nicht vorgeschrieben.
+        </p>
+        <p class="mt-2">
+          Zur Wahrung der Widerrufsfrist reicht es aus, dass du die Mitteilung über die Ausübung des
+          Widerrufsrechts vor Ablauf der Widerrufsfrist absendest.
+        </p>
+      </section>
+
+      <section class="spec-rule pt-4">
+        <h2 class="font-semibold text-ink mb-2">Folgen des Widerrufs</h2>
+        <p>
+          Wenn du diesen Vertrag widerrufst, haben wir alle Zahlungen, die wir von dir erhalten haben,
+          einschließlich der Lieferkosten (mit Ausnahme der zusätzlichen Kosten, die sich daraus ergeben,
+          dass du eine andere Art der Lieferung als die von uns angebotene, günstigste Standardlieferung
+          gewählt hast), unverzüglich und spätestens binnen vierzehn Tagen ab dem Tag zurückzuzahlen,
+          an dem die Mitteilung über deinen Widerruf dieses Vertrags bei uns eingegangen ist.
+        </p>
+        <p class="mt-2">
+          Wir verwenden für diese Rückzahlung dasselbe Zahlungsmittel, das du bei der ursprünglichen
+          Transaktion eingesetzt hast. Du trägst die unmittelbaren Kosten der Rücksendung der Waren.
+        </p>
+      </section>
+
+      <section class="spec-rule pt-4">
+        <h2 class="font-semibold text-ink mb-2">Ausnahmen</h2>
+        <p>
+          Das Widerrufsrecht besteht nicht bei Waren, die schnell verderben können oder deren Verfallsdatum
+          überschritten würde, sowie bei versiegelten Waren, die aus Gründen des Gesundheitsschutzes oder
+          der Hygiene nicht zur Rückgabe geeignet sind, wenn ihre Versiegelung nach der Lieferung entfernt wurde.
+        </p>
+      </section>
+    </div>
+
+    <div class="spec-rule my-10"></div>
+
+    <h2 class="font-semibold text-ink mb-2">Muster-Widerrufsformular</h2>
+    <p class="text-sm text-muted">
+      (Wenn du den Vertrag widerrufen willst, fülle bitte dieses Formular aus und sende es zurück.)
+    </p>
+    <p class="mt-4 rounded-xl border border-line bg-panel/40 p-5 font-mono text-sm leading-relaxed">
+      An Nicolas Carlucci, Carlucci Store, Tulpenstraße 5, 71272 Renningen, E-Mail:
+      kontakt@carlus.shop:<br /><br />
+      Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über den Kauf der
+      folgenden Waren (*):<br /><br />
+      Bestellt am (*) / erhalten am (*):<br /><br />
+      Name des/der Verbraucher(s):<br /><br />
+      Anschrift des/der Verbraucher(s):<br /><br />
+      Unterschrift des/der Verbraucher(s) (nur bei Mitteilung auf Papier):<br /><br />
+      Datum<br /><br />
+      <span class="text-muted">(*) Unzutreffendes streichen.</span>
+    </p>
+  </div>
+</BaseLayout>

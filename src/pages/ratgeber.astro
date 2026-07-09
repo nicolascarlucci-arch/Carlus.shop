@@ -1,0 +1,118 @@
+---
+export const prerender = true;
+import BaseLayout from '@/layouts/BaseLayout.astro';
+
+const shakerTips = [
+  {
+    title: 'Fächer clever nutzen',
+    text: 'Nutze die zwei aufschraubbaren Fächer (100 ml + 150 ml) getrennt für Pre- und Post-Workout-Supplements – z. B. Creatin morgens, Protein nach dem Training – ohne dass sich Pulver vermischt.',
+    icon: '<path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>',
+  },
+  {
+    title: 'Klumpenfrei shaken',
+    text: 'Erst die Flüssigkeit einfüllen, dann das Pulver, danach 15–20 Sekunden kräftig schütteln. Der Edelstahl-Federmixer verteilt Klumpen am zuverlässigsten, wenn er genug Bewegungsraum hat.',
+    icon: '<path d="M9.59 4.59A2 2 0 1 1 11 8H2"/><path d="M12.59 19.41A2 2 0 1 0 14 16H2"/><path d="M17.73 7.73A2.5 2.5 0 1 1 19.5 12H2"/>',
+  },
+  {
+    title: 'Doppelpack im Alltag',
+    text: 'Ein Shaker begleitet dich unterwegs (Tabletten-Organizer fürs Vitamin der Wahl direkt mit dabei), der zweite wartet frisch gespült zu Hause – kein Nachspülen zwischen Einheiten nötig.',
+    icon: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  },
+  {
+    title: 'Reinigung',
+    text: 'Shaker, Deckel, Fächer und Mixball sind komplett spülmaschinenfest. Am besten direkt nach Gebrauch ausspülen, bevor Proteinreste antrocknen und sich festsetzen.',
+    icon: '<path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/>',
+  },
+];
+
+const vestTips = [
+  {
+    title: 'Passform richtig einstellen',
+    text: 'Die Riemen stufenlos auf deinen Brustumfang (80–130 cm) einstellen, bis die Weste eng anliegt, aber nicht einschnürt. So wackelt oder verrutscht nichts im Lauftempo.',
+    icon: '<line x1="4" x2="4" y1="21" y2="14"/><line x1="4" x2="4" y1="10" y2="3"/><line x1="12" x2="12" y1="21" y2="12"/><line x1="12" x2="12" y1="8" y2="3"/><line x1="20" x2="20" y1="21" y2="16"/><line x1="20" x2="20" y1="12" y2="3"/><line x1="2" x2="6" y1="14" y2="14"/><line x1="10" x2="14" y1="8" y2="8"/><line x1="18" x2="22" y1="16" y2="16"/>',
+  },
+  {
+    title: 'Trinken ohne Tempoverlust',
+    text: 'Die mitgelieferte 500-ml-Softflasche sitzt vorne griffbereit in der elastischen Tasche. Kleine Schlucke im Lauftakt nehmen, statt für jeden Schluck stehen zu bleiben.',
+    icon: '<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.4-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
+  },
+  {
+    title: 'Alles richtig verstauen',
+    text: 'Handy in die vordere Zip-Tasche, Schlüssel oder Gels in die Brusttaschen, Jacke oder Snacks in die geräumigere Rückentasche mit Reißverschluss.',
+    icon: '<path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="M3.29 7 12 12l8.71-5"/><line x1="12" x2="12" y1="22" y2="12"/>',
+  },
+  {
+    title: 'Sichtbarkeit bei Dunkelheit',
+    text: 'Reflektorstreifen, Mini-Reflektoren und der reflektierende Rückenprint wirken am besten in der Dämmerung oder im Winter – idealerweise kombiniert mit heller Oberbekleidung.',
+    icon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  },
+];
+---
+
+<BaseLayout title="Ratgeber" description="Tipps zur richtigen Nutzung von UvsU Shaker und Laufweste – direkt von Carlu's.">
+  <!-- Hero -->
+  <section class="relative bg-ink text-bg overflow-hidden">
+    <div class="hero-glow"></div>
+    <div class="grain-overlay"></div>
+    <div class="relative max-w-4xl mx-auto px-4 sm:px-6 py-20 sm:py-28">
+      <p class="mono-tag text-bg/50 mb-4 fade-in">— Know-How</p>
+      <h1 class="headline text-5xl sm:text-6xl fade-in" style="animation-delay: 60ms">
+        Ausrüstung, die wirklich <span class="text-transparent bg-clip-text bg-gradient-to-r from-accent to-teal">liefert</span>.
+      </h1>
+      <p class="mt-6 text-lg text-bg/70 max-w-xl fade-in" style="animation-delay: 120ms">
+        Kurze, praktische Tipps rund um deine Carlu's Produkte – direkt von Carlu's, ohne Umwege.
+      </p>
+    </div>
+    <div class="spec-rule"></div>
+  </section>
+
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 py-16">
+    <section class="reveal">
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <p class="mono-tag mb-1 text-teal">01 / UvsU Shaker</p>
+          <h2 class="text-2xl sm:text-3xl font-bold">Richtig nutzen</h2>
+        </div>
+        <a href="/produkte/uvsu-shaker" class="text-sm font-medium underline underline-offset-4 hover:text-accent transition-colors whitespace-nowrap">Zum Produkt →</a>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {shakerTips.map((tip, i) => (
+          <div class="reveal group relative bg-surface border border-line rounded-sm p-6 overflow-hidden transition-all duration-300 hover:border-teal hover:-translate-y-1 hover:shadow-[0_20px_50px_-15px_var(--color-teal)]" style={`transition-delay: ${i * 70}ms`}>
+            <span class="pointer-events-none absolute -right-2 -top-6 font-mono font-bold text-7xl text-panel select-none transition-colors duration-300 group-hover:text-teal/20">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div class="relative w-10 h-10 rounded-full bg-panel flex items-center justify-center mb-3 text-teal">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={tip.icon} />
+            </div>
+            <h3 class="relative font-bold text-lg mb-1.5">{tip.title}</h3>
+            <p class="relative text-sm text-muted">{tip.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="mt-16 spec-rule pt-10 reveal">
+      <div class="flex items-end justify-between mb-6">
+        <div>
+          <p class="mono-tag mb-1 text-accent">02 / Laufweste</p>
+          <h2 class="text-2xl sm:text-3xl font-bold">Richtig nutzen</h2>
+        </div>
+        <a href="/produkte/laufweste" class="text-sm font-medium underline underline-offset-4 hover:text-accent transition-colors whitespace-nowrap">Zum Produkt →</a>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {vestTips.map((tip, i) => (
+          <div class="reveal group relative bg-surface border border-line rounded-sm p-6 overflow-hidden transition-all duration-300 hover:border-accent hover:-translate-y-1 hover:shadow-[0_20px_50px_-15px_var(--color-accent)]" style={`transition-delay: ${i * 70}ms`}>
+            <span class="pointer-events-none absolute -right-2 -top-6 font-mono font-bold text-7xl text-panel select-none transition-colors duration-300 group-hover:text-accent/20">
+              {String(i + 1).padStart(2, '0')}
+            </span>
+            <div class="relative w-10 h-10 rounded-full bg-panel flex items-center justify-center mb-3 text-ink">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" set:html={tip.icon} />
+            </div>
+            <h3 class="relative font-bold text-lg mb-1.5">{tip.title}</h3>
+            <p class="relative text-sm text-muted">{tip.text}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>

@@ -1,0 +1,99 @@
+---
+export const prerender = true;
+
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import ProductCard from '@/components/ProductCard.astro';
+import Marquee from '@/components/Marquee.astro';
+import { products } from '@/data/products';
+
+const tickerItems = [
+  'Direkt vom Hersteller',
+  'Versand in 2–4 Werktagen',
+  '14 Tage Rückgabe',
+  'Sichere Zahlung via Stripe',
+];
+---
+
+<BaseLayout title="Home" description="Carlu's Shop – UvsU Shaker & Laufweste. Direkt vom Hersteller. Versand in 2–4 Werktagen nach DE, AT, CH.">
+  <Marquee items={tickerItems} />
+
+  <!-- Hero -->
+  <section class="relative text-bg overflow-hidden" style="background-color: #020509;">
+    <!-- Cinematic vest photo — section bg is sampled directly from the photo's
+         own corner pixels (~#020509) so there's zero visible seam, positioned
+         toward the right so it clears the text column -->
+    <div
+      class="hidden lg:block absolute -top-44 -bottom-44 right-0 w-[62%] pr-6 xl:pr-10"
+      style="-webkit-mask-image: linear-gradient(to left, black 70%, transparent 100%); mask-image: linear-gradient(to left, black 70%, transparent 100%);"
+    >
+      <img
+        src="/images/products/laufweste-spotlight-front.png"
+        alt="Carlu's Laufweste, dramatisch im Spotlight freigestellt"
+        class="w-full h-full object-contain object-center"
+      />
+    </div>
+    <div class="grain-overlay"></div>
+
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-24 sm:py-32 lg:py-40">
+      <div class="lg:max-w-xl">
+        <p class="mono-tag text-bg/50 mb-4 fade-in">— Carlu's Shop</p>
+        <h1 class="headline text-6xl sm:text-8xl lg:text-7xl xl:text-8xl fade-in" style="animation-delay: 60ms">
+          Wir liefern die Produkte,<br />
+          Du lieferst <span class="text-accent">ab</span>!
+        </h1>
+        <p class="mt-8 text-lg sm:text-xl text-bg/70 fade-in" style="animation-delay: 120ms">
+          Qualitätsprodukte, die dir deinen Fitness-Alltag erleichtern.<br />
+          Deutsche Marke. Versand nach Deutschland, Österreich, Schweiz.
+        </p>
+        <a
+          href="/produkte"
+          class="sticker mt-10 inline-flex items-center gap-2 bg-accent text-accent-ink font-bold px-8 py-4 rounded-sm text-lg fade-in"
+          style="animation-delay: 180ms"
+        >
+          Alle Produkte
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </a>
+      </div>
+    </div>
+    <div class="spec-rule"></div>
+  </section>
+
+  <!-- Products -->
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 py-16">
+    <div class="flex items-end justify-between mb-8 reveal">
+      <div>
+        <p class="mono-tag mb-1">Kollektion</p>
+        <h2 class="text-2xl sm:text-3xl font-bold">Unsere Produkte</h2>
+      </div>
+      <a href="/produkte" class="text-sm font-medium underline underline-offset-4 hover:text-accent transition-colors">Alle ansehen</a>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {products.map((product, i) => (
+        <div class="reveal" style={`transition-delay: ${i * 80}ms`}>
+          <ProductCard product={product} />
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <!-- USP -->
+  <section class="spec-rule">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-12 pb-16 grid grid-cols-1 sm:grid-cols-3 gap-8">
+      <div class="reveal">
+        <p class="mono-tag mb-2 text-accent">01 / Qualität</p>
+        <h3 class="font-bold text-lg mb-1">Geprüfte Materialien</h3>
+        <p class="text-sm text-muted">Jedes Produkt wird sorgfältig auf Qualität und Langlebigkeit geprüft.</p>
+      </div>
+      <div class="reveal" style="transition-delay: 100ms">
+        <p class="mono-tag mb-2 text-teal">02 / Lieferung</p>
+        <h3 class="font-bold text-lg mb-1">Schneller Versand</h3>
+        <p class="text-sm text-muted">Versand in 2–4 Werktagen nach Deutschland, Österreich und der Schweiz.</p>
+      </div>
+      <div class="reveal" style="transition-delay: 200ms">
+        <p class="mono-tag mb-2 text-accent">03 / Service</p>
+        <h3 class="font-bold text-lg mb-1">14 Tage Rückgabe</h3>
+        <p class="text-sm text-muted">Gesetzliches Widerrufsrecht: 14 Tage ohne Angabe von Gründen.</p>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
