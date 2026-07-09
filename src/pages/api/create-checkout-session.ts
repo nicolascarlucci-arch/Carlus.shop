@@ -22,7 +22,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const stripe = getStripeClient();
-    const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? 'https://carlus.shop';
+    const siteUrl = import.meta.env.PUBLIC_SITE_URL ?? 'https://carlucci.store';
 
     const lineItems: Stripe.Checkout.SessionCreateParams.LineItem[] = [];
     let subtotalEUR = 0;
