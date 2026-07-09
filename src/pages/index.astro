@@ -23,18 +23,28 @@ const tickerItems = [
          own corner pixels (~#020509) so there's zero visible seam, positioned
          toward the right so it clears the text column -->
     <div
-      class="hidden lg:block absolute -top-44 -bottom-44 right-0 w-[62%] pr-6 xl:pr-10"
+      class="hidden lg:block absolute -top-56 -bottom-56 right-0 w-[70%] pr-4 xl:pr-8"
       style="-webkit-mask-image: linear-gradient(to left, black 70%, transparent 100%); mask-image: linear-gradient(to left, black 70%, transparent 100%);"
     >
-      <img
-        src="/images/products/laufweste-spotlight-front.png"
-        alt="Carlu's Laufweste, dramatisch im Spotlight freigestellt"
-        class="vest-rotate w-full h-full object-contain object-center"
-      />
+      <div class="vest-spin-wrap w-full h-full">
+        <div class="vest-spin">
+          <img
+            src="/images/products/laufweste-spotlight-front.png"
+            alt="Carlu's Laufweste, dramatisch im Spotlight freigestellt"
+            class="vest-face"
+          />
+          <img
+            src="/images/products/laufweste-spotlight-back.png"
+            alt=""
+            aria-hidden="true"
+            class="vest-face vest-face-back"
+          />
+        </div>
+      </div>
     </div>
     <div class="grain-overlay"></div>
 
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-24 lg:py-40">
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 lg:py-48">
       <div class="flex items-center gap-5 sm:gap-8 lg:block">
         <div class="flex-1 min-w-0 lg:max-w-xl">
           <p class="mono-tag text-bg/50 mb-2 sm:mb-4 fade-in">— Carlu's Shop</p>
@@ -58,12 +68,22 @@ const tickerItems = [
 
         <!-- Mobile/tablet: image next to the text instead of the
              side-panel treatment (which only works at lg+ widths) -->
-        <div class="lg:hidden shrink-0 w-[36%] sm:w-[32%] fade-in" style="animation-delay: 220ms">
-          <img
-            src="/images/products/laufweste-spotlight-front.png"
-            alt="Carlu's Laufweste, dramatisch im Spotlight freigestellt"
-            class="vest-rotate w-full h-auto object-contain"
-          />
+        <div class="lg:hidden shrink-0 w-[44%] sm:w-[40%] fade-in" style="animation-delay: 220ms">
+          <div class="vest-spin-wrap" style="aspect-ratio: 768 / 1375;">
+            <div class="vest-spin">
+              <img
+                src="/images/products/laufweste-spotlight-front.png"
+                alt="Carlu's Laufweste, dramatisch im Spotlight freigestellt"
+                class="vest-face"
+              />
+              <img
+                src="/images/products/laufweste-spotlight-back.png"
+                alt=""
+                aria-hidden="true"
+                class="vest-face vest-face-back"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

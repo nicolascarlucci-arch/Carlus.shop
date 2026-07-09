@@ -236,17 +236,36 @@ html.js-ready .reveal.is-visible {
   pointer-events: none;
 }
 
-/* Continuous, slow rotation for the hero vest photo. A full 360°
-   in-plane spin would flip a flat photo upside down mid-cycle, so this
-   swings back and forth instead — reads as constant motion without
-   ever looking broken. */
-.vest-rotate {
-  animation: vest-rotate 7s ease-in-out infinite;
-  transform-origin: 50% 50%;
+/* Continuous 360° "turntable" rotation for the hero vest. A flat photo
+   spinning in-plane would flip upside down mid-cycle, so instead this
+   spins around the Y-axis in 3D and swaps between a front and a back
+   photo (each hidden via backface-visibility once it turns away) —
+   a real front/back reveal instead of a broken-looking flip. */
+.vest-spin-wrap {
+  perspective: 1600px;
 }
-@keyframes vest-rotate {
-  0%, 100% { transform: rotate(-4deg); }
-  50% { transform: rotate(4deg); }
+.vest-spin {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  animation: vest-spin-y 10s linear infinite;
+}
+.vest-face {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.vest-face-back {
+  transform: rotateY(180deg);
+}
+@keyframes vest-spin-y {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
 }
 
 /* Faint grain texture for the dark hero, keeps large flat blacks from
