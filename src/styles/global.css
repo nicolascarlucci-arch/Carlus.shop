@@ -242,14 +242,14 @@ html.js-ready .reveal.is-visible {
    photo (each hidden via backface-visibility once it turns away) —
    a real front/back reveal instead of a broken-looking flip. */
 .vest-spin-wrap {
-  perspective: 1600px;
+  perspective: 2400px;
 }
 .vest-spin {
   position: relative;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
-  animation: vest-spin-y 10s linear infinite;
+  animation: vest-spin-y 10s cubic-bezier(0.65, 0, 0.35, 1) infinite;
 }
 .vest-face {
   position: absolute;
@@ -263,9 +263,20 @@ html.js-ready .reveal.is-visible {
 .vest-face-back {
   transform: rotateY(180deg);
 }
+/* Mostly holds on the front/back faces and snaps quickly through the
+   edge-on angles — lingering there would just look like a flat photo
+   getting squashed. (No filter/blur here on purpose: combining
+   `filter` with `backface-visibility` on a 3D-transformed element
+   is buggy in Chromium and can make the hidden face flash through
+   mirrored instead of staying hidden.) */
 @keyframes vest-spin-y {
-  from { transform: rotateY(0deg); }
-  to { transform: rotateY(360deg); }
+  0% { transform: rotateY(0deg) scale(1); }
+  42% { transform: rotateY(18deg) scale(1); }
+  46% { transform: rotateY(90deg) scale(0.88); }
+  50% { transform: rotateY(180deg) scale(1); }
+  92% { transform: rotateY(198deg) scale(1); }
+  96% { transform: rotateY(270deg) scale(0.88); }
+  100% { transform: rotateY(360deg) scale(1); }
 }
 
 /* Faint grain texture for the dark hero, keeps large flat blacks from
