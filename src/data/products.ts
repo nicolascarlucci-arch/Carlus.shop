@@ -43,7 +43,7 @@ export const products: Product[] = [
         id: 'doppelpack-schwarz-mint',
         label: 'Doppelpack – Schwarz + Mint',
         priceEUR: 22.99,
-        stripePriceId: 'price_1Tqf1XQkCnHmkjWfApHXrFNb',
+        stripePriceId: 'price_1TrPzaH7Qq98HnZhUSIyLKlM',
       },
     ],
     specs: {
@@ -78,7 +78,7 @@ export const products: Product[] = [
         id: 'doppelpack-schwarz-weiss',
         label: 'Doppelpack – Schwarz + Weiß',
         priceEUR: 22.99,
-        stripePriceId: 'price_1Tqf1YQkCnHmkjWfcVTa9MiL',
+        stripePriceId: 'price_1TrPzbH7Qq98HnZhF2cTwcUC',
       },
     ],
     specs: {
@@ -134,20 +134,20 @@ export const products: Product[] = [
       {
         id: 'laufweste-s',
         label: 'S',
-        priceEUR: 22.99,
-        stripePriceId: 'price_1Tqf1YQkCnHmkjWfDKfyoYZo',
+        priceEUR: 19.99,
+        stripePriceId: 'price_1TrPzbH7Qq98HnZhbxmrIU41',
       },
       {
         id: 'laufweste-m',
         label: 'M',
-        priceEUR: 22.99,
-        stripePriceId: 'price_1Tqf1ZQkCnHmkjWfqNNZNKkJ',
+        priceEUR: 19.99,
+        stripePriceId: 'price_1TrPzbH7Qq98HnZhbxmrIU41',
       },
       {
         id: 'laufweste-l',
         label: 'L',
-        priceEUR: 22.99,
-        stripePriceId: 'price_1Tqf1ZQkCnHmkjWfaoJephay',
+        priceEUR: 19.99,
+        stripePriceId: 'price_1TrPzbH7Qq98HnZhbxmrIU41',
       },
     ],
     specs: {
