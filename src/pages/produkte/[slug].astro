@@ -182,67 +182,79 @@ const outOfStock = isOutOfStock(product);
 <script>
   import { addToCart } from '@/lib/cart';
 
-  const form = document.getElementById('add-to-cart-form') as HTMLFormElement | null;
-  const select = document.getElementById('variant-select') as HTMLSelectElement | null;
-  const priceDisplay = document.getElementById('price-display');
-  const qtyInput = document.getElementById('quantity-input') as HTMLInputElement | null;
-  const mainImage = document.getElementById('main-image') as HTMLImageElement | null;
+  // Astro's view-transition router only runs this module script once per
+  // session (it dedupes identical inline scripts across page navigations),
+  // so setup has to happen on astro:page-load — which fires after every
+  // navigation, including the first — rather than at the top level. Without
+  // this, none of the listeners below get (re-)attached after navigating
+  // from one product page to another and the form/quantity buttons go dead.
+  function setupProductForm() {
+    const form = document.getElementById('add-to-cart-form') as HTMLFormElement | null;
+    const select = document.getElementById('variant-select') as HTMLSelectElement | null;
+    const priceDisplay = document.getElementById('price-display');
+    const qtyInput = document.getElementById('quantity-input') as HTMLInputElement | null;
+    const mainImage = document.getElementById('main-image') as HTMLImageElement | null;
 
-  select?.addEventListener('change', () => {
-    const opt = select.options[select.selectedIndex] as HTMLOptionElement & { dataset: { price: string } };
-    const price = parseFloat(opt.dataset.price);
-    if (priceDisplay) {
-      priceDisplay.textContent = price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
-    }
-  });
+    if (!form) return;
 
-  document.querySelectorAll<HTMLButtonElement>('[data-img]').forEach((btn) => {
-    btn.addEventListener('click', () => {
-      if (mainImage && btn.dataset.img) mainImage.src = btn.dataset.img;
-    });
-  });
-
-  document.getElementById('qty-minus')?.addEventListener('click', () => {
-    if (!qtyInput) return;
-    qtyInput.value = String(Math.max(1, parseInt(qtyInput.value || '1', 10) - 1));
-  });
-  document.getElementById('qty-plus')?.addEventListener('click', () => {
-    if (!qtyInput) return;
-    qtyInput.value = String(Math.min(10, parseInt(qtyInput.value || '1', 10) + 1));
-  });
-
-  form?.addEventListener('submit', (e) => {
-    e.preventDefault();
-    if (!select) return;
-
-    const variantId = select.value;
-    const opt = select.options[select.selectedIndex] as HTMLOptionElement & { dataset: { price: string; label: string } };
-    const quantity = parseInt(qtyInput?.value ?? '1') || 1;
-
-    const productSlug = form.dataset.slug ?? '';
-    const productName = form.dataset.name ?? '';
-    const productImage = form.dataset.image ?? '';
-
-    addToCart({
-      variantId,
-      productSlug,
-      label: `${productName} – ${opt.dataset.label}`,
-      priceEUR: parseFloat(opt.dataset.price),
-      image: productImage,
-      quantity,
+    select?.addEventListener('change', () => {
+      const opt = select.options[select.selectedIndex] as HTMLOptionElement & { dataset: { price: string } };
+      const price = parseFloat(opt.dataset.price);
+      if (priceDisplay) {
+        priceDisplay.textContent = price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+      }
     });
 
-    const btn = document.getElementById('add-to-cart-btn') as HTMLButtonElement | null;
-    if (btn) {
-      const orig = btn.textContent ?? '';
-      btn.disabled = true;
-      btn.textContent = '✓ Hinzugefügt';
-      btn.classList.add('bg-success');
-      setTimeout(() => {
-        btn.textContent = orig;
-        btn.classList.remove('bg-success');
-        btn.disabled = false;
-      }, 1500);
-    }
-  });
+    document.querySelectorAll<HTMLButtonElement>('[data-img]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (mainImage && btn.dataset.img) mainImage.src = btn.dataset.img;
+      });
+    });
+
+    document.getElementById('qty-minus')?.addEventListener('click', () => {
+      if (!qtyInput) return;
+      qtyInput.value = String(Math.max(1, parseInt(qtyInput.value || '1', 10) - 1));
+    });
+    document.getElementById('qty-plus')?.addEventListener('click', () => {
+      if (!qtyInput) return;
+      qtyInput.value = String(Math.min(10, parseInt(qtyInput.value || '1', 10) + 1));
+    });
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (!select) return;
+
+      const variantId = select.value;
+      const opt = select.options[select.selectedIndex] as HTMLOptionElement & { dataset: { price: string; label: string } };
+      const quantity = parseInt(qtyInput?.value ?? '1') || 1;
+
+      const productSlug = form.dataset.slug ?? '';
+      const productName = form.dataset.name ?? '';
+      const productImage = form.dataset.image ?? '';
+
+      addToCart({
+        variantId,
+        productSlug,
+        label: `${productName} – ${opt.dataset.label}`,
+        priceEUR: parseFloat(opt.dataset.price),
+        image: productImage,
+        quantity,
+      });
+
+      const btn = document.getElementById('add-to-cart-btn') as HTMLButtonElement | null;
+      if (btn) {
+        const orig = btn.textContent ?? '';
+        btn.disabled = true;
+        btn.textContent = '✓ Hinzugefügt';
+        btn.classList.add('bg-success');
+        setTimeout(() => {
+          btn.textContent = orig;
+          btn.classList.remove('bg-success');
+          btn.disabled = false;
+        }, 1500);
+      }
+    });
+  }
+
+  document.addEventListener('astro:page-load', setupProductForm);
 </script>
