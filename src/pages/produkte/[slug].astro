@@ -58,6 +58,9 @@ const outOfStock = isOutOfStock(product);
           {outOfStock && (
             <span class="sticker bg-ink text-bg mono-tag px-2.5 py-1 rounded-sm">Ausverkauft</span>
           )}
+          {!outOfStock && defaultVariant.compareAtEUR !== undefined && (
+            <span class="sticker bg-ink text-bg mono-tag px-2.5 py-1 rounded-sm">Angebot</span>
+          )}
         </div>
         <h1 class="headline text-4xl mb-2">{product.name}</h1>
         <p class="text-muted mb-6">{product.description}</p>
@@ -80,7 +83,7 @@ const outOfStock = isOutOfStock(product);
                 class="w-full appearance-none border border-line rounded-sm px-3 py-2.5 pr-9 bg-surface focus:outline-none focus:border-ink transition-colors disabled:opacity-50"
               >
                 {product.variants.map((v) => (
-                  <option value={v.id} data-price={v.priceEUR} data-label={v.label}>
+                  <option value={v.id} data-price={v.priceEUR} data-compare={v.compareAtEUR ?? ''} data-label={v.label}>
                     {v.label} – {v.priceEUR.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
                   </option>
                 ))}
@@ -109,8 +112,16 @@ const outOfStock = isOutOfStock(product);
           </div>
 
           <!-- Price display -->
-          <p class="text-2xl font-bold font-mono transition-all" id="price-display">
-            {defaultVariant.priceEUR.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+          <p class="flex items-center gap-3 transition-all">
+            <span
+              id="price-compare-display"
+              class:list={['text-lg font-mono text-muted line-through', { hidden: defaultVariant.compareAtEUR === undefined }]}
+            >
+              {defaultVariant.compareAtEUR?.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+            </span>
+            <span class="text-2xl font-bold font-mono" id="price-display">
+              {defaultVariant.priceEUR.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+            </span>
           </p>
 
           <button
@@ -192,16 +203,26 @@ const outOfStock = isOutOfStock(product);
     const form = document.getElementById('add-to-cart-form') as HTMLFormElement | null;
     const select = document.getElementById('variant-select') as HTMLSelectElement | null;
     const priceDisplay = document.getElementById('price-display');
+    const priceCompareDisplay = document.getElementById('price-compare-display');
     const qtyInput = document.getElementById('quantity-input') as HTMLInputElement | null;
     const mainImage = document.getElementById('main-image') as HTMLImageElement | null;
 
     if (!form) return;
 
     select?.addEventListener('change', () => {
-      const opt = select.options[select.selectedIndex] as HTMLOptionElement & { dataset: { price: string } };
+      const opt = select.options[select.selectedIndex] as HTMLOptionElement & { dataset: { price: string; compare: string } };
       const price = parseFloat(opt.dataset.price);
       if (priceDisplay) {
         priceDisplay.textContent = price.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+      }
+      if (priceCompareDisplay) {
+        const compare = opt.dataset.compare;
+        if (compare) {
+          priceCompareDisplay.textContent = parseFloat(compare).toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
+          priceCompareDisplay.classList.remove('hidden');
+        } else {
+          priceCompareDisplay.classList.add('hidden');
+        }
       }
     });
 

@@ -2,6 +2,8 @@ export interface ProductVariant {
   id: string;
   label: string;
   priceEUR: number;
+  /** Present when the variant is on sale — the crossed-out original price. */
+  compareAtEUR?: number;
   stripePriceId: string;
   stock?: number;
 }
@@ -42,8 +44,8 @@ export const products: Product[] = [
       {
         id: 'doppelpack-schwarz-mint',
         label: 'Doppelpack – Schwarz + Mint',
-        priceEUR: 22.99,
-        stripePriceId: 'price_1TrPzaH7Qq98HnZhUSIyLKlM',
+        priceEUR: 19.99,
+        stripePriceId: 'price_1TrQPSH7Qq98HnZhnaBMouF2',
       },
     ],
     specs: {
@@ -77,8 +79,8 @@ export const products: Product[] = [
       {
         id: 'doppelpack-schwarz-weiss',
         label: 'Doppelpack – Schwarz + Weiß',
-        priceEUR: 22.99,
-        stripePriceId: 'price_1TrPzbH7Qq98HnZhF2cTwcUC',
+        priceEUR: 19.99,
+        stripePriceId: 'price_1TrQPTH7Qq98HnZh5yCUN30R',
       },
     ],
     specs: {
@@ -134,20 +136,23 @@ export const products: Product[] = [
       {
         id: 'laufweste-s',
         label: 'S',
-        priceEUR: 19.99,
-        stripePriceId: 'price_1TrPzbH7Qq98HnZhbxmrIU41',
+        priceEUR: 14.99,
+        compareAtEUR: 24.99,
+        stripePriceId: 'price_1TrQSlH7Qq98HnZho5RZXxVF',
       },
       {
         id: 'laufweste-m',
         label: 'M',
-        priceEUR: 19.99,
-        stripePriceId: 'price_1TrPzbH7Qq98HnZhbxmrIU41',
+        priceEUR: 14.99,
+        compareAtEUR: 24.99,
+        stripePriceId: 'price_1TrQSlH7Qq98HnZho5RZXxVF',
       },
       {
         id: 'laufweste-l',
         label: 'L',
-        priceEUR: 19.99,
-        stripePriceId: 'price_1TrPzbH7Qq98HnZhbxmrIU41',
+        priceEUR: 14.99,
+        compareAtEUR: 24.99,
+        stripePriceId: 'price_1TrQSlH7Qq98HnZho5RZXxVF',
       },
     ],
     specs: {
@@ -248,6 +253,10 @@ export function isOutOfStock(product: Product): boolean {
   return product.variants.every((v) => v.stock === 0);
 }
 
+export function getFromVariant(product: Product): ProductVariant {
+  return product.variants.reduce((min, v) => (v.priceEUR < min.priceEUR ? v : min), product.variants[0]);
+}
+
 export function getFromPrice(product: Product): number {
-  return Math.min(...product.variants.map((v) => v.priceEUR));
+  return getFromVariant(product).priceEUR;
 }

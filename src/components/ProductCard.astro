@@ -1,14 +1,18 @@
 ---
 import type { Product } from '@/data/products';
-import { getFromPrice, isOutOfStock } from '@/data/products';
+import { getFromVariant, isOutOfStock } from '@/data/products';
 
 interface Props {
   product: Product;
 }
 
 const { product } = Astro.props;
-const fromPrice = getFromPrice(product);
+const fromVariant = getFromVariant(product);
 const outOfStock = isOutOfStock(product);
+const onSale = !outOfStock && fromVariant.compareAtEUR !== undefined;
+const discountPct = onSale
+  ? Math.round((1 - fromVariant.priceEUR / fromVariant.compareAtEUR!) * 100)
+  : 0;
 ---
 
 <a
@@ -35,6 +39,9 @@ const outOfStock = isOutOfStock(product);
     {outOfStock && (
       <span class="sticker absolute top-3 left-3 bg-ink text-bg mono-tag px-2.5 py-1 rounded-sm">Ausverkauft</span>
     )}
+    {onSale && (
+      <span class="sticker absolute top-3 left-3 bg-ink text-bg mono-tag px-2.5 py-1 rounded-sm">−{discountPct}%</span>
+    )}
   </div>
   <div class="p-4">
     <p class="mono-tag mb-1">{product.tagline}</p>
@@ -44,8 +51,21 @@ const outOfStock = isOutOfStock(product);
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
       </span>
     </div>
-    <p class="mt-2 text-sm text-muted">
-      {outOfStock ? 'Derzeit nicht verfügbar' : `ab ${fromPrice.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}`}
+    <p class="mt-2 text-sm">
+      {outOfStock ? (
+        <span class="text-muted">Derzeit nicht verfügbar</span>
+      ) : onSale ? (
+        <span class="flex items-center gap-2">
+          <span class="text-muted line-through">
+            {fromVariant.compareAtEUR!.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+          </span>
+          <span class="font-bold text-ink">
+            ab {fromVariant.priceEUR.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}
+          </span>
+        </span>
+      ) : (
+        <span class="text-muted">ab {fromVariant.priceEUR.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' })}</span>
+      )}
     </p>
   </div>
 </a>
