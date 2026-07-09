@@ -19,28 +19,24 @@ const tickerItems = [
 
   <!-- Hero -->
   <section class="relative text-bg overflow-hidden" style="background-color: #020509;">
-    <!-- Cinematic vest photo — cutout PNGs with a transparent background,
-         so the section's own solid bg color shows through with zero visible
-         seam, positioned toward the right so it clears the text column -->
+    <!-- Cinematic vest video — real 360° turntable render, already on a
+         near-black studio background (~#010101 at the corners) so it sits
+         on the section's #020509 with zero visible seam, positioned toward
+         the right so it clears the text column -->
     <div
       class="hidden lg:block absolute -top-64 -bottom-64 -right-20 xl:-right-32 w-[78%]"
       style="-webkit-mask-image: linear-gradient(to left, black 70%, transparent 100%); mask-image: linear-gradient(to left, black 70%, transparent 100%);"
     >
-      <div class="vest-spin-wrap w-full h-full">
-        <div class="vest-spin">
-          <img
-            src="/images/products/laufweste-cutout-front.png"
-            alt="Carlu's Laufweste, freigestellt"
-            class="vest-face"
-          />
-          <img
-            src="/images/products/laufweste-cutout-back.png"
-            alt=""
-            aria-hidden="true"
-            class="vest-face vest-face-back"
-          />
-        </div>
-      </div>
+      <video
+        src="/images/products/laufweste-hero-360.mp4"
+        poster="/images/products/laufweste-hero-360-poster.jpg"
+        class="w-full h-full object-contain"
+        autoplay
+        muted
+        loop
+        playsinline
+        aria-hidden="true"
+      ></video>
     </div>
     <div class="grain-overlay"></div>
 
@@ -69,21 +65,17 @@ const tickerItems = [
         <!-- Mobile/tablet: image next to the text instead of the
              side-panel treatment (which only works at lg+ widths) -->
         <div class="lg:hidden shrink-0 w-[58%] sm:w-[52%] fade-in" style="animation-delay: 220ms">
-          <div class="vest-spin-wrap" style="aspect-ratio: 880 / 1113;">
-            <div class="vest-spin">
-              <img
-                src="/images/products/laufweste-cutout-front.png"
-                alt="Carlu's Laufweste, freigestellt"
-                class="vest-face"
-              />
-              <img
-                src="/images/products/laufweste-cutout-back.png"
-                alt=""
-                aria-hidden="true"
-                class="vest-face vest-face-back"
-              />
-            </div>
-          </div>
+          <video
+            src="/images/products/laufweste-hero-360.mp4"
+            poster="/images/products/laufweste-hero-360-poster.jpg"
+            class="w-full h-full object-contain"
+            style="aspect-ratio: 1 / 1;"
+            autoplay
+            muted
+            loop
+            playsinline
+            aria-hidden="true"
+          ></video>
         </div>
       </div>
     </div>
