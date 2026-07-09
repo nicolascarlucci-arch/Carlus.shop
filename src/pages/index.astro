@@ -19,9 +19,9 @@ const tickerItems = [
 
   <!-- Hero -->
   <section class="relative text-bg overflow-hidden" style="background-color: #020509;">
-    <!-- Cinematic vest photo — section bg is sampled directly from the photo's
-         own corner pixels (~#020509) so there's zero visible seam, positioned
-         toward the right so it clears the text column -->
+    <!-- Cinematic vest photo — cutout PNGs with a transparent background,
+         so the section's own solid bg color shows through with zero visible
+         seam, positioned toward the right so it clears the text column -->
     <div
       class="hidden lg:block absolute -top-64 -bottom-64 -right-20 xl:-right-32 w-[78%]"
       style="-webkit-mask-image: linear-gradient(to left, black 70%, transparent 100%); mask-image: linear-gradient(to left, black 70%, transparent 100%);"
@@ -29,12 +29,12 @@ const tickerItems = [
       <div class="vest-spin-wrap w-full h-full">
         <div class="vest-spin">
           <img
-            src="/images/products/laufweste-spotlight-front.png"
-            alt="Carlu's Laufweste, dramatisch im Spotlight freigestellt"
+            src="/images/products/laufweste-cutout-front.png"
+            alt="Carlu's Laufweste, freigestellt"
             class="vest-face"
           />
           <img
-            src="/images/products/laufweste-spotlight-back.png"
+            src="/images/products/laufweste-cutout-back.png"
             alt=""
             aria-hidden="true"
             class="vest-face vest-face-back"
@@ -69,15 +69,15 @@ const tickerItems = [
         <!-- Mobile/tablet: image next to the text instead of the
              side-panel treatment (which only works at lg+ widths) -->
         <div class="lg:hidden shrink-0 w-[58%] sm:w-[52%] fade-in" style="animation-delay: 220ms">
-          <div class="vest-spin-wrap" style="aspect-ratio: 768 / 1375;">
+          <div class="vest-spin-wrap" style="aspect-ratio: 880 / 1113;">
             <div class="vest-spin">
               <img
-                src="/images/products/laufweste-spotlight-front.png"
-                alt="Carlu's Laufweste, dramatisch im Spotlight freigestellt"
+                src="/images/products/laufweste-cutout-front.png"
+                alt="Carlu's Laufweste, freigestellt"
                 class="vest-face"
               />
               <img
-                src="/images/products/laufweste-spotlight-back.png"
+                src="/images/products/laufweste-cutout-back.png"
                 alt=""
                 aria-hidden="true"
                 class="vest-face vest-face-back"
