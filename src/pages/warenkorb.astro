@@ -66,9 +66,14 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
   const fmtEUR = (n: number) => n.toLocaleString('de-DE', { style: 'currency', currency: 'EUR' });
 
   function renderCart() {
+    // astro:page-load fires on every navigation, not just ones landing on
+    // this page, so this must bail out quietly when these elements aren't
+    // present instead of assuming they exist.
+    const emptyEl = document.getElementById('cart-empty');
+    const filledEl = document.getElementById('cart-filled');
+    if (!emptyEl || !filledEl) return;
+
     const cart = getCart();
-    const emptyEl = document.getElementById('cart-empty')!;
-    const filledEl = document.getElementById('cart-filled')!;
 
     if (cart.length === 0) {
       emptyEl.classList.remove('hidden');
@@ -112,33 +117,46 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
     document.getElementById('total')!.textContent = fmtEUR(total);
   }
 
-  renderCart();
-  onCartUpdated(renderCart);
+  let unsubscribe: (() => void) | undefined;
 
-  document.getElementById('checkout-btn')?.addEventListener('click', async () => {
-    const btn = document.getElementById('checkout-btn') as HTMLButtonElement;
-    btn.disabled = true;
-    btn.textContent = 'Bitte warten…';
+  // Astro's view-transition router only runs an inline module script once
+  // per session (identical script content across navigations is deduped),
+  // so setup has to happen on astro:page-load — which fires after every
+  // navigation, including the first — rather than at the top level.
+  // Otherwise revisiting /warenkorb a second time in the same session
+  // leaves it dead: nothing rendered, checkout button unresponsive.
+  function setupCartPage() {
+    unsubscribe?.();
+    renderCart();
+    unsubscribe = onCartUpdated(renderCart);
 
-    try {
-      const cart = getCart();
-      const res = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: cart }),
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        alert(data.error ?? 'Fehler beim Checkout. Bitte versuche es erneut.');
+    document.getElementById('checkout-btn')?.addEventListener('click', async () => {
+      const btn = document.getElementById('checkout-btn') as HTMLButtonElement;
+      btn.disabled = true;
+      btn.textContent = 'Bitte warten…';
+
+      try {
+        const cart = getCart();
+        const res = await fetch('/api/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: cart }),
+        });
+        const data = await res.json();
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          alert(data.error ?? 'Fehler beim Checkout. Bitte versuche es erneut.');
+          btn.disabled = false;
+          btn.textContent = 'Zur Kasse →';
+        }
+      } catch {
+        alert('Netzwerkfehler. Bitte versuche es erneut.');
         btn.disabled = false;
         btn.textContent = 'Zur Kasse →';
       }
-    } catch {
-      alert('Netzwerkfehler. Bitte versuche es erneut.');
-      btn.disabled = false;
-      btn.textContent = 'Zur Kasse →';
-    }
-  });
+    });
+  }
+
+  document.addEventListener('astro:page-load', setupCartPage);
 </script>

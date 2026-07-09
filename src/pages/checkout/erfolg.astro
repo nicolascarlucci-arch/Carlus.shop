@@ -46,5 +46,20 @@ if (sessionId) {
 
 <script>
   import { clearCart } from '@/lib/cart';
-  clearCart();
+
+  // astro:page-load fires on *every* navigation, not just ones landing on
+  // this page — a bare `document.addEventListener('astro:page-load',
+  // clearCart)` would wipe the cart again the next time the user visits
+  // any other page in the same session. Guard on the current path so this
+  // only runs when actually on the success page. (A top-level call, with
+  // no listener at all, would have the opposite problem: it'd only ever
+  // clear the cart once per session, leaving a stale cart after a second
+  // purchase — Astro dedupes identical inline scripts across navigations.)
+  function clearCartOnSuccessPage() {
+    if (window.location.pathname.startsWith('/checkout/erfolg')) {
+      clearCart();
+    }
+  }
+
+  document.addEventListener('astro:page-load', clearCartOnSuccessPage);
 </script>

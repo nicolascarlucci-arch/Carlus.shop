@@ -44,35 +44,44 @@ import BaseLayout from '@/layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-  const form = document.getElementById('contact-form') as HTMLFormElement;
-  const errEl = document.getElementById('form-error')!;
-  const successEl = document.getElementById('form-success')!;
+  // See src/pages/produkte/[slug].astro for why this lives inside
+  // astro:page-load rather than at the top level: Astro's view-transition
+  // router dedupes identical inline scripts, so without this the form
+  // would go dead on a second visit to /kontakt in the same session.
+  function setupContactForm() {
+    const form = document.getElementById('contact-form') as HTMLFormElement | null;
+    const errEl = document.getElementById('form-error');
+    const successEl = document.getElementById('form-success');
+    if (!form || !errEl || !successEl) return;
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    errEl.classList.add('hidden');
-    successEl.classList.add('hidden');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      errEl.classList.add('hidden');
+      successEl.classList.add('hidden');
 
-    const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
-    btn.disabled = true;
-    btn.textContent = 'Senden…';
+      const btn = form.querySelector('button[type=submit]') as HTMLButtonElement;
+      btn.disabled = true;
+      btn.textContent = 'Senden…';
 
-    try {
-      const res = await fetch('/api/kontakt', { method: 'POST', body: new FormData(form) });
-      const data = await res.json();
-      if (data.ok) {
-        form.reset();
-        successEl.classList.remove('hidden');
-      } else {
-        errEl.textContent = data.error ?? 'Fehler beim Senden.';
+      try {
+        const res = await fetch('/api/kontakt', { method: 'POST', body: new FormData(form) });
+        const data = await res.json();
+        if (data.ok) {
+          form.reset();
+          successEl.classList.remove('hidden');
+        } else {
+          errEl.textContent = data.error ?? 'Fehler beim Senden.';
+          errEl.classList.remove('hidden');
+        }
+      } catch {
+        errEl.textContent = 'Netzwerkfehler. Bitte versuche es erneut.';
         errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Nachricht senden';
       }
-    } catch {
-      errEl.textContent = 'Netzwerkfehler. Bitte versuche es erneut.';
-      errEl.classList.remove('hidden');
-    } finally {
-      btn.disabled = false;
-      btn.textContent = 'Nachricht senden';
-    }
-  });
+    });
+  }
+
+  document.addEventListener('astro:page-load', setupContactForm);
 </script>

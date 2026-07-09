@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "test:nav": "node test-navigation.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.2.1",

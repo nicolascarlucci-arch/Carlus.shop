@@ -106,18 +106,24 @@ const currentPath = Astro.url.pathname;
     setTimeout(() => el.classList.remove('scale-125'), 180);
   }
 
-  updateBadge(getCartCount());
-  onCartUpdated((items) => {
-    const count = items.reduce((s, i) => s + i.quantity, 0);
-    updateBadge(count);
-  });
+  // Header renders on every page, and it's tempting to assume its own
+  // script only needs to run once since the header markup barely changes
+  // between pages. In practice Astro's page swap does not reliably keep
+  // *this* header's DOM nodes (and their listeners) alive across a
+  // client-side navigation, and the module script itself only executes
+  // once per session (Astro dedupes identical inline scripts) — so
+  // anything below that reads live state (#cart-count) or binds a
+  // listener (#menu-toggle) has to be redone on astro:page-load, which
+  // fires after every navigation including the first. Listener binding
+  // uses named functions + removeEventListener-before-addEventListener so
+  // re-running this is safe whether or not the node actually persisted.
+  function handleToggleClick() {
+    const toggle = document.getElementById('menu-toggle');
+    const menu = document.getElementById('mobile-menu');
+    const iconOpen = document.getElementById('menu-icon-open');
+    const iconClose = document.getElementById('menu-icon-close');
+    if (!toggle) return;
 
-  const toggle = document.getElementById('menu-toggle');
-  const menu = document.getElementById('mobile-menu');
-  const iconOpen = document.getElementById('menu-icon-open');
-  const iconClose = document.getElementById('menu-icon-close');
-
-  toggle?.addEventListener('click', () => {
     const isOpen = toggle.getAttribute('aria-expanded') === 'true';
     const next = !isOpen;
     toggle.setAttribute('aria-expanded', String(next));
@@ -126,5 +132,22 @@ const currentPath = Astro.url.pathname;
     if (menu) menu.style.borderTopWidth = next ? '1px' : '0';
     iconOpen?.classList.toggle('hidden', next);
     iconClose?.classList.toggle('hidden', !next);
+  }
+
+  function setupHeader() {
+    updateBadge(getCartCount());
+
+    const toggle = document.getElementById('menu-toggle');
+    toggle?.removeEventListener('click', handleToggleClick);
+    toggle?.addEventListener('click', handleToggleClick);
+  }
+
+  document.addEventListener('astro:page-load', setupHeader);
+
+  // A plain window-level listener, unaffected by DOM morphing and always
+  // re-reading #cart-count fresh when it fires — safe to register once.
+  onCartUpdated((items) => {
+    const count = items.reduce((s, i) => s + i.quantity, 0);
+    updateBadge(count);
   });
 </script>
