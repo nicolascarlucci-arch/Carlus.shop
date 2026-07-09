@@ -9,41 +9,37 @@ import { products } from '@/data/products';
 <BaseLayout title="Home" description="Carlu's Shop – UvsU Shaker & Laufweste. Direkt vom Hersteller. Versand in 2–4 Werktagen nach DE, AT, CH.">
   <!-- Hero -->
   <section class="relative text-bg overflow-hidden" style="background-color: #020509;">
-    <!-- Cinematic vest video — real 360° turntable render, already on a
-         near-black studio background (~#010101 at the corners) so it sits
-         on the section's #020509 with zero visible seam, positioned toward
-         the right so it clears the text column -->
+    <!-- Cinematic vest photo — cutout PNGs with a transparent background,
+         so the section's own solid bg color shows through with zero visible
+         seam, positioned toward the right so it clears the text column.
+         Spins once on page load (not a continuous loop) via .vest-spin. -->
     <div
       class="hidden lg:block absolute inset-y-0 right-0 xl:right-6 w-[38%]"
       style="-webkit-mask-image: linear-gradient(to left, black 70%, transparent 100%); mask-image: linear-gradient(to left, black 70%, transparent 100%);"
     >
-      <video
-        data-hero-video
-        src="/images/products/laufweste-hero-360.mp4"
-        poster="/images/products/laufweste-hero-360-poster.jpg"
-        class="w-full h-full object-contain object-top"
-        autoplay
-        muted
-        loop
-        playsinline
-        preload="auto"
-        aria-hidden="true"
-      ></video>
-      <img
-        src="/images/products/laufweste-hero-360-poster.jpg"
-        alt=""
-        aria-hidden="true"
-        data-hero-video-poster
-        class="pointer-events-none absolute inset-0 w-full h-full object-contain object-top"
-      />
+      <div class="vest-spin-wrap w-full h-full">
+        <div class="vest-spin">
+          <img
+            src="/images/products/laufweste-cutout-front.png"
+            alt="Carlu's Laufweste, freigestellt"
+            class="vest-face"
+          />
+          <img
+            src="/images/products/laufweste-cutout-back.png"
+            alt=""
+            aria-hidden="true"
+            class="vest-face vest-face-back"
+          />
+        </div>
+      </div>
     </div>
     <div class="grain-overlay"></div>
 
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-32 lg:py-56">
-      <div class="flex items-center gap-5 sm:gap-8 lg:block">
+    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 py-16 sm:py-32 lg:py-56">
+      <div class="flex flex-col-reverse sm:flex-row sm:items-center gap-6 sm:gap-8 lg:block">
         <div class="flex-1 min-w-0 lg:max-w-xl">
           <p class="mono-tag text-bg/50 mb-2 sm:mb-4 fade-in">— Carlu's Shop</p>
-          <h1 class="headline text-3xl sm:text-6xl lg:text-7xl xl:text-8xl fade-in" style="animation-delay: 60ms">
+          <h1 class="headline text-4xl sm:text-6xl lg:text-7xl xl:text-8xl fade-in" style="animation-delay: 60ms">
             Wir liefern die Produkte,<br />
             Du lieferst <span class="text-accent">ab</span>!
           </h1>
@@ -63,28 +59,22 @@ import { products } from '@/data/products';
 
         <!-- Mobile/tablet: image next to the text instead of the
              side-panel treatment (which only works at lg+ widths) -->
-        <div class="lg:hidden relative shrink-0 w-[58%] sm:w-[52%] fade-in" style="animation-delay: 220ms">
-          <video
-            data-hero-video
-            src="/images/products/laufweste-hero-360.mp4"
-            poster="/images/products/laufweste-hero-360-poster.jpg"
-            class="w-full h-full object-contain"
-            style="aspect-ratio: 1 / 1;"
-            autoplay
-            muted
-            loop
-            playsinline
-            preload="auto"
-            aria-hidden="true"
-          ></video>
-          <img
-            src="/images/products/laufweste-hero-360-poster.jpg"
-            alt=""
-            aria-hidden="true"
-            data-hero-video-poster
-            class="pointer-events-none absolute inset-0 w-full h-full object-contain"
-            style="aspect-ratio: 1 / 1;"
-          />
+        <div class="lg:hidden shrink-0 w-full max-w-[280px] mx-auto sm:w-[52%] sm:max-w-none sm:mx-0 fade-in" style="animation-delay: 220ms">
+          <div class="vest-spin-wrap" style="aspect-ratio: 880 / 1113;">
+            <div class="vest-spin">
+              <img
+                src="/images/products/laufweste-cutout-front.png"
+                alt="Carlu's Laufweste, freigestellt"
+                class="vest-face"
+              />
+              <img
+                src="/images/products/laufweste-cutout-back.png"
+                alt=""
+                aria-hidden="true"
+                class="vest-face vest-face-back"
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -130,50 +120,3 @@ import { products } from '@/data/products';
     </div>
   </section>
 </BaseLayout>
-
-<script>
-  // Some mobile browsers ignore the `autoplay` attribute unless playback is
-  // also kicked off from script once the element is actually in the DOM
-  // (e.g. if the connection is slow enough that autoplay eligibility is
-  // re-checked after the poster paints) — this makes sure the hero videos
-  // start immediately instead of sitting on the poster frame.
-  function playHeroVideos() {
-    document.querySelectorAll<HTMLVideoElement>('[data-hero-video]').forEach((video) => {
-      video.muted = true;
-      video.play().catch(() => {});
-    });
-  }
-
-  // iOS Safari draws its own big center "tap to play" button on top of any
-  // paused <video> whenever autoplay hasn't kicked in yet — CSS tricks to
-  // hide that overlay are unreliable across Safari versions. Instead each
-  // video has a plain <img> of the same poster frame layered on top of it;
-  // once the video actually confirms playback (the `playing` event, not
-  // just a resolved play() promise) the image is removed, revealing the
-  // video underneath. Until then visitors just see a static photo, never
-  // Safari's broken-looking play icon.
-  function hidePosterWhenPlaying(video: HTMLVideoElement) {
-    const poster = video.nextElementSibling;
-    if (!(poster instanceof HTMLElement) || !poster.hasAttribute('data-hero-video-poster')) return;
-    if (!video.paused && video.currentTime > 0) {
-      poster.remove();
-      return;
-    }
-    video.addEventListener('playing', () => poster.remove(), { once: true });
-  }
-
-  function initHeroVideos() {
-    playHeroVideos();
-    document.querySelectorAll<HTMLVideoElement>('[data-hero-video]').forEach(hidePosterWhenPlaying);
-  }
-  initHeroVideos();
-  document.addEventListener('astro:page-load', initHeroVideos);
-
-  // Some devices (e.g. iOS in Low Power Mode) block autoplay outright.
-  // Rather than requiring a tap on the video specifically, retry on the
-  // very first interaction anywhere on the page — most visitors touch/
-  // scroll within the first second anyway.
-  ['touchstart', 'click', 'scroll'].forEach((evt) =>
-    document.addEventListener(evt, playHeroVideos, { once: true, passive: true })
-  );
-</script>
