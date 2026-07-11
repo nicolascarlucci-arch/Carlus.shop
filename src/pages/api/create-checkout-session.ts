@@ -12,6 +12,25 @@ interface CartPayload {
   quantity: number;
 }
 
+// Cold Vercel function starts / momentary Stripe API blips shouldn't turn
+// into a hard failure for the customer — retry once on errors that look
+// transient (network/rate-limit), not on errors that would fail identically
+// every time (bad price ID, invalid params, etc).
+async function createSessionWithRetry(
+  stripe: Stripe,
+  params: Stripe.Checkout.SessionCreateParams,
+): Promise<Stripe.Checkout.Session> {
+  try {
+    return await stripe.checkout.sessions.create(params);
+  } catch (err) {
+    const type = (err as { type?: string })?.type;
+    const retryable = type === 'StripeConnectionError' || type === 'StripeAPIError' || type === 'StripeRateLimitError';
+    if (!retryable) throw err;
+    await new Promise((r) => setTimeout(r, 400));
+    return stripe.checkout.sessions.create(params);
+  }
+}
+
 export const POST: APIRoute = async ({ request }) => {
   try {
     const body = await request.json();
@@ -47,7 +66,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const shippingEUR = subtotalEUR >= SHIPPING.freeAboveEUR ? 0 : SHIPPING.flatRateEUR;
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await createSessionWithRetry(stripe, {
       mode: 'payment',
       // payment_method_types intentionally omitted: Stripe then shows every method
       // enabled in the Dashboard (Settings > Payment methods) automatically, filtered
@@ -72,6 +91,15 @@ export const POST: APIRoute = async ({ request }) => {
     });
   } catch (err) {
     console.error('Stripe checkout error:', err);
-    return new Response(JSON.stringify({ error: 'Interner Fehler.' }), { status: 500 });
+    // Surface the actual reason (Stripe's own error messages are written to
+    // be shown to end users, e.g. "No such price: ...") instead of a bare
+    // "Interner Fehler." — a specific message here is the difference between
+    // a instantly-diagnosable report and having to dig through Vercel logs
+    // blind every time this happens again.
+    const message = err instanceof Error ? err.message : 'Unbekannter Fehler';
+    return new Response(
+      JSON.stringify({ error: `Zahlung konnte nicht gestartet werden (${message}). Bitte versuche es erneut oder kontaktiere uns.` }),
+      { status: 500 },
+    );
   }
 };
