@@ -30,8 +30,8 @@ export const POST: APIRoute = async ({ request }) => {
     });
 
     const brevoKey = import.meta.env.BREVO_API_KEY;
-    const toEmail = import.meta.env.CONTACT_TO_EMAIL;
-    if (brevoKey && toEmail) {
+    const toEmail = import.meta.env.CONTACT_TO_EMAIL ?? 'support@cartana.de';
+    if (brevoKey) {
       try {
         await fetch('https://api.brevo.com/v3/smtp/email', {
           method: 'POST',

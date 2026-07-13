@@ -19,7 +19,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const brevoKey = import.meta.env.BREVO_API_KEY;
-  const toEmail = import.meta.env.CONTACT_TO_EMAIL ?? 'nicolas.carlucci@cartana.de';
+  const toEmail = import.meta.env.CONTACT_TO_EMAIL ?? 'support@cartana.de';
 
   if (brevoKey) {
     try {
